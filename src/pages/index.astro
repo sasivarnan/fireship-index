@@ -1,0 +1,52 @@
+---
+import { env } from "cloudflare:workers";
+import { calculateIndex } from "../index.ts";
+import {
+  getFeed,
+  type FeedSnapshot,
+  type SnapshotStore,
+} from "../lib/feed-service.ts";
+import PageHead from "../components/PageHead.astro";
+import IndexHero from "../components/IndexHero.astro";
+import RecentVideos from "../components/RecentVideos.astro";
+import AboutIndex from "../components/AboutIndex.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import "../style.css";
+let snapshot: FeedSnapshot | null = null;
+try {
+  snapshot = await getFeed(
+    (env as unknown as { FEED_CACHE: SnapshotStore }).FEED_CACHE,
+  );
+} catch {
+  Astro.response.status = 503;
+  Astro.response.headers.set("Retry-After", "60");
+}
+if (snapshot) {
+  Astro.response.headers.set("X-Feed-Fetched-At", String(snapshot.fetchedAt));
+  Astro.response.headers.set("X-Feed-Stale", snapshot.stale ? "1" : "0");
+}
+const index = calculateIndex(snapshot?.videos ?? []);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <PageHead hasFeed={snapshot !== null} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">
+      Skip to content
+    </a>
+    <main id="main">
+      <IndexHero score={index.score} />
+      <div class="content-section" id="recent-videos" tabindex="-1">
+        <RecentVideos index={index} snapshot={snapshot} />
+        <AboutIndex index={index} />
+        <SiteFooter />
+      </div>
+    </main>
+    <script>
+      import "../client.ts";
+    </script>
+  </body>
+</html>

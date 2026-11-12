@@ -1,0 +1,48 @@
+---
+import type { calculateIndex } from "../index.ts";
+import { matchReason } from "../lib/presentation.ts";
+interface Props {
+  index: ReturnType<typeof calculateIndex>;
+}
+const { index } = Astro.props;
+const date = new Intl.DateTimeFormat("en", {
+  month: "short",
+  day: "numeric",
+  timeZone: "UTC",
+});
+---
+
+<ol id="video-list" class="video-grid" role="list" aria-busy="false">
+  {index.classifications.map(
+    ({ video, titleMatches, descriptionMatches, keywords }) => (
+      <li class="video-card">
+        <a
+          class="video-link"
+          href={`https://www.youtube.com/watch?v=${video.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            src={`https://i.ytimg.com/vi/${video.id}/mqdefault.jpg`}
+            alt=""
+            width="320"
+            height="180"
+            loading="lazy"
+            decoding="async"
+            fetchpriority="low"
+            referrerpolicy="no-referrer"
+          />
+          <span>{video.title}</span>
+        </a>
+        <time datetime={video.published}>
+          {date.format(new Date(video.published))}
+        </time>
+        <p class="video-evidence">
+          {keywords.length > 0
+            ? matchReason(titleMatches, descriptionMatches)
+            : "No AI terms matched"}
+        </p>
+      </li>
+    ),
+  )}
+</ol>

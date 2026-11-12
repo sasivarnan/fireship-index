@@ -1,0 +1,16 @@
+# The Fireship Index
+
+An independent, satirical score of AI coverage in Fireship's recent YouTube uploads. Built by Sasivarnan R (https://sasivarnan.com). Not affiliated with Fireship.
+
+## Data
+Cloudflare fetches the original Atom RSS feed from YouTube. Both video titles and descriptions are used. Sponsor calls to action, course links, and repeated description paragraphs are excluded where possible. Rules can misclassify videos.
+
+The home page includes the calculated score and video list in its server-rendered HTML. /api/feed returns the saved feed and index as JSON. Responses refresh on request after 15 minutes, with old results served while regeneration runs. The last successful feed is saved in KV for outages. Cache contents can vary by Cloudflare location.
+
+## Score
+The latest 15 available uploads count, regardless of age. They are sorted newest first and deduplicated. A shorter feed uses its available count. Coverage days = max(1, days from the oldest included upload through the calculation time). AI share = matched uploads / included uploads. Weekly rate = matched uploads / coverage days × 7. Score = round(100 × (0.6 × AI share + 0.4 × min(weekly rate / 3, 1))). No included uploads means no score.
+
+The score is satire, not a prediction, probability, or measure of AI capability, job losses, or human extinction. The RSS feed is only a recent sample. Check the displayed fetch time before describing the score as current.
+
+## Original source
+https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA

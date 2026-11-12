@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:yt="http://www.youtube.com/xml/schemas/2015" xmlns:media="http://search.yahoo.com/mrss/">
+<link rel="alternate" href="https://www.youtube.com/channel/UCsBjURrPoezykLs9EqgamOA"/>
+<entry><yt:videoId>abcdefghijk</yt:videoId><title>An unexpected release</title><published>2026-11-05T12:00:00Z</published><media:group><media:description>Claude now writes applications. &amp; more.</media:description></media:group></entry>
+<entry><yt:videoId>abcdefghij2</yt:videoId><title>CSS still works</title><published>2026-11-04T12:00:00Z</published><media:group><media:description>A look at browser layout.</media:description></media:group></entry>
+</feed>

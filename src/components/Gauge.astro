@@ -1,0 +1,49 @@
+---
+import { gaugeAngle, gaugePoint, gaugeState } from "../lib/gauge.ts";
+interface Props {
+  score: number | null;
+}
+const { score } = Astro.props;
+const index = { score };
+const state = gaugeState(score);
+const start = gaugePoint(0, 248);
+const end = gaugePoint(100, 248);
+const arc = `M${start.x} ${start.y} A248 248 0 1 1 ${end.x} ${end.y}`;
+---
+
+<div class="instrument">
+  <svg class="dial-art" viewBox="0 0 800 620" aria-hidden="true">
+    <path class="dial-track" d={arc} fill="none" />
+    <path
+      id="gauge-progress"
+      class="dial-progress"
+      d={arc}
+      fill="none"
+      pathLength="100"
+      stroke-dasharray={`${index.score ?? 0} 100`}
+    />
+    <g
+      id="gauge-needle"
+      transform={`rotate(${gaugeAngle(index.score ?? 0)} 400 310)`}
+    >
+      <line x1="635" y1="310" x2="660" y2="310" />
+      <circle cx="648" cy="310" r="4" />
+    </g>
+  </svg>
+  <div class="gauge-readout" aria-hidden="true">
+    <p class="score">
+      <span id="score">{index.score ?? "—"}</span>
+    </p>
+    <p class="out-of">OUT OF 100</p>
+  </div>
+  <div class="gauge-endpoints" aria-hidden="true">
+    <span>0</span>
+    <span>100</span>
+  </div>
+  <div class="gauge-status" aria-hidden="true">
+    <span id="gauge-state">{state.label}</span>
+  </div>
+  <p id="unofficial-ribbon" class="unofficial-ribbon">
+    VERY UNOFFICIAL
+  </p>
+</div>

@@ -1,0 +1,68 @@
+---
+import { site } from "../lib/site.ts";
+import "@fontsource/barlow-condensed/latin-600.css";
+import dialFont from "@fontsource/barlow-condensed/files/barlow-condensed-latin-600-normal.woff2?url";
+interface Props {
+  hasFeed: boolean;
+}
+const { hasFeed } = Astro.props;
+const canonical = site.origin ? `${site.origin}/` : undefined;
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: site.name,
+  description: site.description,
+  ...(canonical ? { url: canonical } : {}),
+  inLanguage: "en",
+  creator: {
+    "@type": "Person",
+    name: "Sasivarnan R",
+    url: "https://sasivarnan.com",
+  },
+};
+---
+
+<meta charset="UTF-8" />
+<link
+  rel="preload"
+  href={dialFont}
+  as="font"
+  type="font/woff2"
+  crossorigin="anonymous"
+/>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{site.name}</title>
+<meta name="description" content={site.description} />
+<meta name="theme-color" content="#10212d" />
+<meta
+  name="robots"
+  content={
+    hasFeed ? "index, follow, max-image-preview:large" : "noindex, follow"
+  }
+/>
+{canonical && <link rel="canonical" href={canonical} />}
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content={site.name} />
+<meta property="og:site_name" content={site.name} />
+<meta property="og:description" content={site.description} />
+{canonical && <meta property="og:url" content={canonical} />}
+{site.origin && (
+  <meta property="og:image" content={`${site.origin}/social.png`} />
+)}
+<meta
+  property="og:image:alt"
+  content="The Fireship Index. More AI. Fewer humans. A satirical gauge of Fireship’s AI coverage."
+/>
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={site.name} />
+<meta name="twitter:description" content={site.description} />
+{site.origin && (
+  <meta name="twitter:image" content={`${site.origin}/social.png`} />
+)}
+<script
+  type="application/ld+json"
+  set:html={JSON.stringify(schema).replaceAll("<", "\\u003c")}
+/>

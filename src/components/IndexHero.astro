@@ -1,0 +1,26 @@
+---
+import { gaugeState } from "../lib/gauge.ts";
+import SiteHeader from "./SiteHeader.astro";
+import Gauge from "./Gauge.astro";
+import GaugeControls from "./GaugeControls.astro";
+interface Props {
+  score: number | null;
+}
+const { score } = Astro.props;
+const state = gaugeState(score);
+---
+
+<section
+  id="gauge-section"
+  class="gauge-section"
+  data-level={state.level}
+  data-score={score ?? ""}
+  aria-label={`Fireship Index: ${score ?? "unavailable"}${score === null ? "" : " out of 100"}. ${state.label}.`}
+>
+  <SiteHeader />
+  <div class="gauge-stage">
+    <Gauge score={score} />
+  </div>
+  <p id="gauge-announcement" class="sr-only" role="status"></p>
+  <GaugeControls />
+</section>

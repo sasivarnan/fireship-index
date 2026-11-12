@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fireship-index",
+  "main": "@astrojs/cloudflare/entrypoints/server",
+  "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": { "directory": "./dist/client", "binding": "ASSETS" },
+  "kv_namespaces": [{ "binding": "FEED_CACHE" }],
+  "version_metadata": { "binding": "DEPLOYMENT" },
+  "observability": { "enabled": true },
+}
