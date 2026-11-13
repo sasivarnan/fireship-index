@@ -3,7 +3,7 @@ import cloudflare from "@astrojs/cloudflare";
 
 export default defineConfig({
   output: "server",
-  site: "https://fireship-index.sasivarnan.com",
+  site: "https://fireship-index.sasivarnan.workers.dev",
   adapter: cloudflare({ imageService: "passthrough" }),
   session: false,
   server: { host: "127.0.0.1", port: 5174 },

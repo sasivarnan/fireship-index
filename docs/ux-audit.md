@@ -274,3 +274,10 @@
 - Added build checks for the sitemap and robots sitemap link. Added runtime checks for canonical, Open Graph, and social image URLs and a successful sitemap response.
 - All 53 tests and type, lint, formatting, build, and local Worker checks passed without a custom URL variable. The generated sitemap and rendered metadata use the production origin. No visual changes or new device checks were made.
 - Changes remain local. No commit, push, or deployment was performed.
+
+## Workers hostname and analytics — 13 November 2026
+
+- Changed Astro’s production origin to `https://fireship-index.sasivarnan.workers.dev`. Canonical links, social metadata, robots, and sitemap use this config.
+- Added the supplied Cloudflare Web Analytics module script and token before the closing body tag. Astro keeps the external script unchanged.
+- All 53 tests and type, lint, formatting, build, and local Worker checks passed. Runtime checks confirmed the new metadata URLs, sitemap, and one analytics script with the supplied token. Analytics collection in the Cloudflare dashboard was not checked.
+- Changes remain local. No commit, push, or deployment was performed.

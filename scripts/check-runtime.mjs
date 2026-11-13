@@ -17,6 +17,12 @@ assert.equal(page.status, 200);
 const html = await page.text();
 assert.match(html, /<h1[\s>]/);
 assert.match(html, /The Fireship Index/);
+const analyticsScripts = (html.match(/<script\b[^>]*>/g) || []).filter((tag) =>
+  tag.includes('src="https://static.cloudflareinsights.com/beacon.min.js"'),
+);
+assert.equal(analyticsScripts.length, 1);
+assert.match(analyticsScripts[0], /type="module"/);
+assert.ok(analyticsScripts[0].includes("aea23303049c483bbc19425c4adef7d1"));
 assert.ok(html.includes(`<link rel="canonical" href="${origin}/"`));
 assert.ok(html.includes(`<meta property="og:url" content="${origin}/"`));
 assert.ok(
