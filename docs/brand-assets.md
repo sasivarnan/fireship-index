@@ -5,6 +5,6 @@ The Fireship logo is used to identify the source channel. This is an independent
 Original SVG from the Fireship-owned website repository:
 https://github.com/fireship-io/fireship.io/blob/987da97305a5968b99347aa748f928a4667336f8/hugo/layouts/partials/svg/logo.svg
 
-Local asset: `public/fireship-logo.svg`.
+Local asset: `public/fireship-logo.svg`. The favicon uses the same flame, tilted inside an open index dial.
 
 Barlow Condensed is served locally. Its SIL Open Font License is included at `public/barlow-condensed-license.txt`.

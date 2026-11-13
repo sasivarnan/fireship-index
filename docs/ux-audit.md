@@ -281,3 +281,15 @@
 - Added the supplied Cloudflare Web Analytics module script and token before the closing body tag. Astro keeps the external script unchanged.
 - All 53 tests and type, lint, formatting, build, and local Worker checks passed. Runtime checks confirmed the new metadata URLs, sitemap, and one analytics script with the supplied token. Analytics collection in the Cloudflare dashboard was not checked.
 - Changes remain local. No commit, push, or deployment was performed.
+
+## Flame and gauge favicon — 13 November 2026
+
+- Replaced the fi text icon with the existing Fireship flame above a simple index gauge. Used the site’s dark background, cream dial, and orange needle. Updated the asset credit.
+- Inspected raster previews at 256 and 32 pixels. All 53 tests and type, lint, formatting, and build checks passed. No browser tab or physical-device checks were run.
+- Changes remain local. No commit, push, or deployment was performed.
+
+## Integrated flame dial — 13 November 2026
+
+- Replaced the stacked flame and speedometer with one open dial around the original flame. Tilted the flame toward the high end, added three broad ticks, and removed the separate needle and centre dot.
+- Compared three angles at 256, 32, and 16 pixels. Selected the middle angle for clear spacing at small sizes. All 53 tests and type, lint, formatting, and build checks passed. No browser tab or physical-device checks were run.
+- Changes remain local. No commit, push, or deployment was performed.
