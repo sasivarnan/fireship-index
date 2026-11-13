@@ -7,7 +7,7 @@
 - Render the public score and videos on the server. Parse RSS on the server; keep the manual file importer removed. Show stale-data states clearly.
 - Keep the score formula and data limits consistent in the interface, README, and discovery files.
 - Do not invent live data, predictions, endorsements, rankings, or a public domain.
-- Use `SITE_URL` for domain-specific metadata. Deploy the Astro Worker with Wrangler only when requested. Keep Cloudflare KV for the last-good feed snapshot.
+- Set the production URL in Astro’s `site` config and use `import.meta.env.SITE` for domain-specific metadata. Deploy the Astro Worker with Wrangler only when requested. Keep Cloudflare KV for the last-good feed snapshot.
 - Keep the Built by Sasivarnan R footer linked to https://sasivarnan.com.
 - Use pnpm and keep `pnpm-lock.yaml` as the only lockfile. Run `pnpm check` after changes. Build before production browser checks.
 - Record browser checks and limits in `docs/ux-audit.md`.

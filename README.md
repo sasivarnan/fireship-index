@@ -24,10 +24,10 @@ With the preview server running, use `pnpm test:runtime` to check the feed API a
 ## Deploy
 
 Deploy to Cloudflare Workers with the `FEED_CACHE` KV binding in `wrangler.jsonc`.
-Set `SITE_URL` to your public HTTPS origin before the build.
+The production URL is set in `astro.config.mjs`.
 
 ```sh
-SITE_URL=https://your-domain.example pnpm build
+pnpm build
 pnpm run deploy
 ```
 

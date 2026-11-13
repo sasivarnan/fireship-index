@@ -267,3 +267,10 @@
 - Reduced the README to short setup, check, deployment, and scoring instructions in Simplified Technical English. Use `pnpm run deploy` to run the project deployment script.
 - All 53 tests and type, lint, formatting, build, and live Worker checks passed with pnpm. Runtime checks covered 15 feed entries with descriptions, server HTML, API and HTML cache hits, and the 404 page. No visual changes were made. No new browser or physical-device checks were run.
 - Changes remain local. No commit, push, or deployment was performed.
+
+## Astro production URL — 13 November 2026
+
+- Set the published origin in Astro’s `site` config. Metadata now uses `import.meta.env.SITE`. Removed the custom `SITE_URL` variable from code and README deployment steps.
+- Added build checks for the sitemap and robots sitemap link. Added runtime checks for canonical, Open Graph, and social image URLs and a successful sitemap response.
+- All 53 tests and type, lint, formatting, build, and local Worker checks passed without a custom URL variable. The generated sitemap and rendered metadata use the production origin. No visual changes or new device checks were made.
+- Changes remain local. No commit, push, or deployment was performed.

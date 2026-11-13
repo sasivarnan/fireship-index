@@ -1,4 +1,4 @@
-const configuredOrigin = import.meta.env.SITE_URL?.trim();
+const configuredOrigin = import.meta.env.SITE?.trim();
 if (configuredOrigin) {
   const url = new URL(configuredOrigin);
   if (
@@ -9,7 +9,7 @@ if (configuredOrigin) {
     url.username ||
     url.password
   )
-    throw new Error("SITE_URL must be a public HTTPS origin.");
+    throw new Error("Astro site must be a public HTTPS origin.");
 }
 export const site = {
   name: "The Fireship Index",

@@ -5,6 +5,7 @@ for (const file of [
   "dist/client/favicon.svg",
   "dist/client/social.png",
   "dist/client/robots.txt",
+  "dist/client/sitemap.xml",
   "dist/client/llms.txt",
 ])
   await access(file);
@@ -16,6 +17,11 @@ assert.ok(
 assert.ok(config.assets.directory);
 const robots = await readFile("dist/client/robots.txt", "utf8");
 assert.match(robots, /Disallow: \/api\//);
+const { default: astroConfig } = await import("../astro.config.mjs");
+const origin = new URL(astroConfig.site).origin;
+assert.ok(robots.includes(`Sitemap: ${origin}/sitemap.xml`));
+const sitemap = await readFile("dist/client/sitemap.xml", "utf8");
+assert.ok(sitemap.includes(`<loc>${origin}/</loc>`));
 const page = await readFile("src/pages/index.astro", "utf8");
 assert.match(page, /IndexHero/);
 assert.match(page, /RecentVideos/);

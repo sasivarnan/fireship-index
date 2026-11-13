@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 
+const { default: astroConfig } = await import("../astro.config.mjs");
+const origin = new URL(astroConfig.site).origin;
 const base = process.env.BASE_URL || "http://127.0.0.1:5174";
 const api = await fetch(`${base}/api/feed`);
 assert.equal(api.status, 200, "RSS API must serve a valid feed");
@@ -15,6 +17,17 @@ assert.equal(page.status, 200);
 const html = await page.text();
 assert.match(html, /<h1[\s>]/);
 assert.match(html, /The Fireship Index/);
+assert.ok(html.includes(`<link rel="canonical" href="${origin}/"`));
+assert.ok(html.includes(`<meta property="og:url" content="${origin}/"`));
+assert.ok(
+  html.includes(`<meta property="og:image" content="${origin}/social.png"`),
+);
+assert.ok(
+  html.includes(`<meta name="twitter:image" content="${origin}/social.png"`),
+);
+const sitemap = await fetch(`${base}/sitemap.xml`);
+assert.equal(sitemap.status, 200);
+assert.ok((await sitemap.text()).includes(`<loc>${origin}/</loc>`));
 const renderedScore = html.match(/data-score="(\d+|)"/)?.[1];
 assert.notEqual(renderedScore, undefined);
 assert.match(
