@@ -6,6 +6,7 @@ import {
   samplePeriod,
   matchReason,
   feedLine,
+  feedStatusParts,
   checkedTime,
 } from "../src/lib/presentation.ts";
 
@@ -44,7 +45,7 @@ test("visible match evidence identifies both sources and handles no matches", ()
 test("saved readings keep a specific UTC check time and missing-description limit", () => {
   const empty = calculateIndex([], Date.UTC(2026, 10, 12));
   const message = feedLine(empty, Date.UTC(2026, 10, 12, 3), true, 2);
-  assert.match(message, /Saved reading/);
+  assert.match(message, /Couldn’t refresh. Showing the last available reading/);
   assert.match(message, /Nov 12, 2026/);
   assert.match(message, /UTC/);
   assert.match(message, /2 missing descriptions; titles used/);
@@ -113,6 +114,23 @@ test("local feed status preserves stale and missing-description notices", () => 
     locale: "en-IN",
   });
   assert.match(line, /8:30/);
-  assert.match(line, /(?:IST|GMT\+5:30) · Saved reading/);
+  assert.match(line, /(?:IST|GMT\+5:30) · Couldn’t refresh/);
   assert.match(line, /2 missing descriptions/);
+});
+
+test("feed status exposes a raw timestamp and notices without parsing display text", () => {
+  const timestamp = Date.UTC(2026, 10, 12, 3);
+  const parts = feedStatusParts(
+    calculateIndex([], timestamp),
+    timestamp,
+    true,
+    2,
+  );
+  assert.equal(parts.checkedAt, "2026-11-12T03:00:00.000Z");
+  assert.equal(parts.prefix, "Checked ");
+  assert.match(parts.checked, /UTC$/);
+  assert.equal(
+    parts.suffix,
+    " · Couldn’t refresh. Showing the last available reading. · 2 missing descriptions; titles used",
+  );
 });

@@ -38,7 +38,7 @@ const index = calculateIndex(snapshot?.videos ?? []);
       Skip to content
     </a>
     <main id="main">
-      <IndexHero score={index.score} />
+      <IndexHero index={index} />
       <div class="content-section" id="recent-videos" tabindex="-1">
         <RecentVideos index={index} snapshot={snapshot} />
         <AboutIndex index={index} />

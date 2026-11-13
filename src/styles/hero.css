@@ -1,0 +1,213 @@
+.gauge-section {
+  --signal: #8de0bb;
+  --ink: #fff2dc;
+  --ground: #10212d;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100svh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 20px 100px;
+  overflow: hidden;
+  color: var(--ink);
+  background: var(--ground);
+  transition:
+    background-color 0.8s ease,
+    color 0.8s ease;
+  color-scheme: dark;
+}
+.gauge-section[data-level="watch"] {
+  --signal: #ffda8c;
+}
+.gauge-section[data-level="danger"] {
+  --signal: #ffaf7c;
+}
+.gauge-section[data-level="critical"] {
+  --signal: #ff9691;
+  --ground: #211e2d;
+}
+.gauge-section[data-level="unknown"] {
+  --signal: #d1dce0;
+}
+.hero-header {
+  flex: none;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+.brand-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.brand-name {
+  min-width: 0;
+  text-align: left;
+}
+.unofficial-label {
+  margin: 4px 0 0;
+  color: #c0ccd3;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+}
+.fireship-brand {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+}
+.fireship-brand img {
+  display: block;
+  width: 32px;
+  height: 32px;
+}
+h1 {
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.25;
+  margin: 0;
+}
+.hero-copy {
+  flex: none;
+  margin-top: 24px;
+  width: 100%;
+  text-align: center;
+}
+.hero-premise {
+  margin: 0;
+  color: var(--ink);
+  font-family: "Fraunces", Georgia, serif;
+  font-size: clamp(30px, 5vw, 54px);
+  font-weight: 500;
+  font-optical-sizing: auto;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+}
+.hero-premise em {
+  display: block;
+  white-space: nowrap;
+  color: var(--signal);
+  transition: color 0.8s ease;
+}
+.hero-context {
+  max-width: 310px;
+  margin: 16px auto 0;
+  color: #c0ccd3;
+  font-size: 14px;
+  line-height: 1.6;
+  text-wrap: balance;
+}
+.gauge-stage {
+  padding-bottom: 32px;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  container-type: size;
+}
+@media (min-width: 960px),
+  (orientation: landscape) and (min-width: 568px) and (max-height: 600px) {
+  .gauge-section {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    column-gap: clamp(24px, 3vw, 56px);
+    padding: 32px clamp(32px, 5vw, 88px) 104px;
+  }
+  .hero-header {
+    grid-column: 1 / -1;
+  }
+  .brand-title {
+    justify-content: flex-start;
+  }
+  .brand-name {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .unofficial-label {
+    margin: 0;
+  }
+  .fireship-brand img {
+    width: 36px;
+    height: 36px;
+  }
+  h1 {
+    font-size: 23px;
+  }
+  .hero-copy {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0;
+    text-align: left;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-premise {
+    font-size: clamp(42px, 5vw, 82px);
+    line-height: 1.04;
+  }
+  .hero-context {
+    max-width: 430px;
+    margin: 24px 0 0;
+    font-size: 16px;
+    text-wrap: pretty;
+  }
+  .gauge-stage {
+    grid-column: 2;
+    grid-row: 2;
+    height: 100%;
+    min-width: 0;
+    padding-bottom: 0;
+  }
+}
+@media (orientation: landscape) and (min-width: 568px) and (max-height: 600px) {
+  .gauge-section {
+    padding: 16px 28px 64px;
+    column-gap: 24px;
+  }
+  .brand-name {
+    gap: 12px;
+  }
+  h1 {
+    font-size: 18px;
+  }
+  .fireship-brand img {
+    width: 26px;
+    height: 26px;
+  }
+  .hero-premise {
+    font-size: clamp(24px, 4vw, 48px);
+  }
+  .hero-context {
+    margin-top: 12px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+}
+@media (max-height: 440px) and (max-width: 567px) {
+  .gauge-section {
+    padding: 8px 16px 56px;
+  }
+  .hero-copy {
+    margin-top: 8px;
+  }
+  .hero-premise {
+    font-size: 25px;
+  }
+  .hero-premise em {
+    display: inline;
+  }
+  .hero-context {
+    margin-top: 6px;
+    font-size: 12px;
+  }
+}

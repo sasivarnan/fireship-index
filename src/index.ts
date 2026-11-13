@@ -1,3 +1,4 @@
+import { SAMPLE_SIZE } from "./lib/settings.ts";
 import { classifyVideos } from "./lib/keywords.ts";
 export { classifyVideos, matchKeywords } from "./lib/keywords.ts";
 
@@ -5,7 +6,6 @@ export const CHANNEL_ID = "UCsBjURrPoezykLs9EqgamOA";
 export const CHANNEL_URL = `https://www.youtube.com/channel/${CHANNEL_ID}`;
 export const FEED_URL = `https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}`;
 export const DAY = 86_400_000;
-export const SAMPLE_SIZE = 15;
 
 export interface Video {
   id: string;

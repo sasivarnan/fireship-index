@@ -40,7 +40,33 @@ if (
 assert.match(html, /application\/ld\+json/);
 assert.match(html, /of the latest \d+ videos cover AI/);
 assert.match(html, /class="video-evidence"/);
-assert.match(html, /VERY UNOFFICIAL/);
+assert.match(html, /class="unofficial-label">Unofficial/);
+assert.match(html, /id="status-ribbon"/);
+assert.match(html, /class="gauge-caption"/);
+assert.match(html, /How much AI is/);
+assert.match(html, /fonts.googleapis.com/);
+assert.match(html, /family=Fraunces/);
+assert.match(html, /Public\+Sans/);
+assert.match(html, /class="hero-copy"/);
+assert.doesNotMatch(html, /class="scroll-label"|id="feed-file"|import XML/);
+assert.match(html, /<section id="method"/);
+assert.match(html, /id="about-title"/);
+assert.doesNotMatch(html, /<details id="method"/);
+assert.match(html, /Fireship posting\?/);
+assert.match(
+  html,
+  /An unofficial index of AI coverage and posting pace across his latest 15 uploads\./,
+);
+assert.ok(
+  html.indexOf('id="sample-summary"') > html.indexOf('id="recent-videos"'),
+);
+assert.match(html, /class="video-match"/);
+assert.match(html, /role="tooltip"/);
+assert.match(html, /aria-describedby="match-/);
+assert.doesNotMatch(html, /<details class="video-match"/);
+assert.match(html, /id="share-reading"/);
+assert.match(html, /id="share-fallback"/);
+assert.doesNotMatch(html, /class="gauge-status"|VERY UNOFFICIAL/);
 assert.doesNotMatch(html, /gauge-context|class="ai-label"/);
 assert.match(html, /in title|in description/);
 const social = await fetch(`${base}/social.png`);

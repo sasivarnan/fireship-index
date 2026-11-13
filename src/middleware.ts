@@ -16,7 +16,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   url.search = "";
   let cache: Cache;
   try {
-    cache = await caches.open("fireship-index-gauge-v16");
+    cache = await caches.open("fireship-index-gauge-v33");
   } catch {
     return next();
   }

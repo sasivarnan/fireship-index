@@ -1,12 +1,9 @@
+import { REVALIDATE_SECONDS } from "../src/lib/settings.ts";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { parseXml } from "../src/lib/xml.ts";
-import {
-  getFeed,
-  REVALIDATE_SECONDS,
-  type SnapshotStore,
-} from "../src/lib/feed-service.ts";
+import { getFeed, type SnapshotStore } from "../src/lib/feed-service.ts";
 import {
   cachedResponse,
   type ResponseStore,
@@ -177,4 +174,147 @@ test("Worker fetch uses supported redirect handling and rejects redirects", asyn
     ),
   );
   assert.equal(store.value, null);
+});
+
+test("a transient RSS 404 retries once and replaces the saved reading", async () => {
+  const store = new MemorySnapshot();
+  store.value = { videos, fetchedAt: now - 3600000 };
+  const signals: (AbortSignal | null | undefined)[] = [];
+  let attempts = 0;
+  const snapshot = await getFeed(
+    store,
+    async (_url, options) => {
+      signals.push(options?.signal);
+      attempts += 1;
+      return attempts === 1
+        ? new Response("Not found", { status: 404 })
+        : new Response(xml);
+    },
+    now,
+  );
+  assert.equal(attempts, 2);
+  assert.equal(signals[0], signals[1]);
+  assert.equal(snapshot.stale, false);
+  assert.equal(snapshot.fetchedAt, now);
+  assert.equal((store.value as { fetchedAt: number }).fetchedAt, now);
+});
+
+test("persistent RSS 404 logs the cause before using the last good reading", async (t) => {
+  const warning = t.mock.method(console, "warn", () => {});
+  const store = new MemorySnapshot();
+  const fetchedAt = now - 3600000;
+  store.value = { videos, fetchedAt };
+  let attempts = 0;
+  const snapshot = await getFeed(
+    store,
+    async () => {
+      attempts += 1;
+      return new Response("Not found", { status: 404 });
+    },
+    now,
+  );
+  assert.equal(attempts, 2);
+  assert.equal(snapshot.stale, true);
+  assert.equal(snapshot.fetchedAt, fetchedAt);
+  assert.equal((store.value as { fetchedAt: number }).fetchedAt, fetchedAt);
+  assert.deepEqual(warning.mock.calls[0].arguments, [
+    "Fireship RSS refresh failed.",
+    {
+      source:
+        "https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA",
+      status: 404,
+      attempts: 2,
+      reason: "RSS returned 404.",
+      usingSavedReading: true,
+      lastSuccessfulFetchAt: new Date(fetchedAt).toISOString(),
+    },
+  ]);
+});
+
+test("rate limiting is logged without an immediate retry", async (t) => {
+  const warning = t.mock.method(console, "warn", () => {});
+  let attempts = 0;
+  await assert.rejects(
+    getFeed(
+      new MemorySnapshot(),
+      async () => {
+        attempts += 1;
+        return new Response("Rate limited", {
+          status: 429,
+          headers: { "Retry-After": "60" },
+        });
+      },
+      now,
+    ),
+    /429/,
+  );
+  assert.equal(attempts, 1);
+  assert.equal(warning.mock.calls[0].arguments[1].status, 429);
+  assert.equal(warning.mock.calls[0].arguments[1].usingSavedReading, false);
+});
+
+test("invalid RSS is logged and does not trigger repeated requests", async (t) => {
+  const warning = t.mock.method(console, "warn", () => {});
+  const store = new MemorySnapshot();
+  store.value = { videos, fetchedAt: now - 3600000 };
+  let attempts = 0;
+  const snapshot = await getFeed(
+    store,
+    async () => {
+      attempts += 1;
+      return new Response("<feed><entry></feed>");
+    },
+    now,
+  );
+  assert.equal(attempts, 1);
+  assert.equal(snapshot.stale, true);
+  assert.match(warning.mock.calls[0].arguments[1].reason, /closing tag/);
+  assert.equal(warning.mock.calls[0].arguments[1].status, 200);
+});
+
+test("timeouts are logged and retain the original saved timestamp", async (t) => {
+  const warning = t.mock.method(console, "warn", () => {});
+  const expired = AbortSignal.abort(
+    new DOMException("Timed out", "TimeoutError"),
+  );
+  t.mock.method(AbortSignal, "timeout", (milliseconds: number) => {
+    assert.equal(milliseconds, 8000);
+    return expired;
+  });
+  const store = new MemorySnapshot();
+  const fetchedAt = now - 3600000;
+  store.value = { videos, fetchedAt };
+  const snapshot = await getFeed(
+    store,
+    async (_url, options) => {
+      assert.equal(options?.signal, expired);
+      throw expired.reason;
+    },
+    now,
+  );
+  assert.equal(snapshot.stale, true);
+  assert.equal(snapshot.fetchedAt, fetchedAt);
+  assert.equal(warning.mock.calls[0].arguments[1].reason, "Request timed out.");
+  assert.equal(warning.mock.calls[0].arguments[1].status, null);
+  assert.equal(warning.mock.calls[0].arguments[1].attempts, 1);
+});
+
+test("upstream Retry-After prevents immediate retry", async (t) => {
+  t.mock.method(console, "warn", () => {});
+  let attempts = 0;
+  await assert.rejects(
+    getFeed(
+      new MemorySnapshot(),
+      async () => {
+        attempts += 1;
+        return new Response("Unavailable", {
+          status: 503,
+          headers: { "Retry-After": "60" },
+        });
+      },
+      now,
+    ),
+    /503/,
+  );
+  assert.equal(attempts, 1);
 });

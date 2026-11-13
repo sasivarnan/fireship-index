@@ -1,7 +1,8 @@
 ---
 import type { calculateIndex } from "../index.ts";
 import type { FeedSnapshot } from "../lib/feed-service.ts";
-import { sampleSummary, feedLine, checkedTime } from "../lib/presentation.ts";
+import { sampleSummary, feedStatusParts } from "../lib/presentation.ts";
+import ShareReading from "./ShareReading.astro";
 import VideoGrid from "./VideoGrid.astro";
 interface Props {
   index: ReturnType<typeof calculateIndex>;
@@ -11,21 +12,31 @@ const { index, snapshot } = Astro.props;
 const missing = index.sample.filter(
   (video) => !video.description.trim(),
 ).length;
-const checked = snapshot ? checkedTime(snapshot.fetchedAt) : "";
-const [beforeChecked, afterChecked] = snapshot
-  ? feedLine(index, snapshot.fetchedAt, snapshot.stale, missing).split(checked)
-  : [];
+const feed = snapshot
+  ? feedStatusParts(index, snapshot.fetchedAt, snapshot.stale, missing)
+  : null;
 ---
 
 <section aria-labelledby="videos-title">
   <div class="list-heading">
     <h2 id="videos-title">Recent videos</h2>
-    <form id="refresh-form" action="/" method="get">
-      <button id="refresh" type="submit">
-        <span aria-hidden="true">↻</span> Refresh
+    <div class="reading-actions">
+      <button
+        id="share-reading"
+        type="button"
+        hidden
+        disabled={index.score === null}
+      >
+        Share reading
       </button>
-    </form>
+      <form id="refresh-form" action="/" method="get">
+        <button id="refresh" type="submit">
+          <span aria-hidden="true">↻</span> Refresh
+        </button>
+      </form>
+    </div>
   </div>
+  <ShareReading />
   <p id="sample-summary" class="muted">
     {sampleSummary(index)}
   </p>
@@ -38,19 +49,16 @@ const [beforeChecked, afterChecked] = snapshot
     data-state={snapshot ? (snapshot.stale ? "saved" : "ready") : "error"}
     data-stale={snapshot?.stale ? "true" : "false"}
   >
-    {snapshot ? (
+    {feed ? (
       <>
-        {beforeChecked}
-        <time
-          data-checked-time
-          datetime={new Date(snapshot.fetchedAt).toISOString()}
-        >
-          {checked}
+        {feed.prefix}
+        <time data-checked-time datetime={feed.checkedAt}>
+          {feed.checked}
         </time>
-        {afterChecked}
+        {feed.suffix}
       </>
     ) : (
-      "No reading yet. Fireship’s feed is unavailable. Try Refresh, or import XML under About the index."
+      "No reading yet. Fireship’s feed is unavailable. Try Refresh again later."
     )}
   </p>
   <VideoGrid index={index} />

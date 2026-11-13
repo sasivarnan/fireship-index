@@ -1,48 +1,44 @@
 ---
 import type { calculateIndex } from "../index.ts";
-import { matchReason } from "../lib/presentation.ts";
+import { videoPresentation } from "../lib/video-presentation.ts";
 interface Props {
   index: ReturnType<typeof calculateIndex>;
 }
 const { index } = Astro.props;
-const date = new Intl.DateTimeFormat("en", {
-  month: "short",
-  day: "numeric",
-  timeZone: "UTC",
-});
+const cards = index.classifications.map(videoPresentation);
 ---
 
 <ol id="video-list" class="video-grid" role="list" aria-busy="false">
-  {index.classifications.map(
-    ({ video, titleMatches, descriptionMatches, keywords }) => (
-      <li class="video-card">
-        <a
-          class="video-link"
-          href={`https://www.youtube.com/watch?v=${video.id}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img
-            src={`https://i.ytimg.com/vi/${video.id}/mqdefault.jpg`}
-            alt=""
-            width="320"
-            height="180"
-            loading="lazy"
-            decoding="async"
-            fetchpriority="low"
-            referrerpolicy="no-referrer"
-          />
-          <span>{video.title}</span>
-        </a>
-        <time datetime={video.published}>
-          {date.format(new Date(video.published))}
-        </time>
-        <p class="video-evidence">
-          {keywords.length > 0
-            ? matchReason(titleMatches, descriptionMatches)
-            : "No AI terms matched"}
-        </p>
-      </li>
-    ),
-  )}
+  {cards.map((card) => (
+    <li class="video-card">
+      <a
+        class="video-link"
+        href={card.href}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img {...card.thumbnail} />
+        <span>{card.title}</span>
+      </a>
+      <div class="video-meta">
+        <time datetime={card.published}>{card.date}</time>
+        {card.matched ? (
+          <div class="video-match">
+            <button
+              type="button"
+              class="match-trigger"
+              aria-describedby={card.tooltipId}
+            >
+              <span class="match-dot" aria-hidden="true"></span>AI match
+            </button>
+            <p class="video-evidence" id={card.tooltipId} role="tooltip">
+              {card.evidence}
+            </p>
+          </div>
+        ) : (
+          <p class="no-match">No AI match</p>
+        )}
+      </div>
+    </li>
+  ))}
 </ol>

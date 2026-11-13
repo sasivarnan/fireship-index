@@ -13,7 +13,7 @@ export function createGauge() {
   const announcement = document.getElementById("gauge-announcement");
   const pause = document.getElementById("gauge-pause");
   const replay = document.getElementById("gauge-replay");
-  const ribbon = document.getElementById("unofficial-ribbon");
+  const ribbon = document.getElementById("status-ribbon");
   if (
     !section ||
     !score ||

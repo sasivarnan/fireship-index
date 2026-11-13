@@ -1,12 +1,15 @@
 ---
+import type { calculateIndex } from "../index.ts";
 import { gaugeState } from "../lib/gauge.ts";
+import HeroCopy from "./HeroCopy.astro";
 import SiteHeader from "./SiteHeader.astro";
 import Gauge from "./Gauge.astro";
 import GaugeControls from "./GaugeControls.astro";
 interface Props {
-  score: number | null;
+  index: ReturnType<typeof calculateIndex>;
 }
-const { score } = Astro.props;
+const { index } = Astro.props;
+const { score } = index;
 const state = gaugeState(score);
 ---
 
@@ -18,8 +21,9 @@ const state = gaugeState(score);
   aria-label={`Fireship Index: ${score ?? "unavailable"}${score === null ? "" : " out of 100"}. ${state.label}.`}
 >
   <SiteHeader />
+  <HeroCopy />
   <div class="gauge-stage">
-    <Gauge score={score} />
+    <Gauge score={score} note={score === null ? "Feed unavailable" : ""} />
   </div>
   <p id="gauge-announcement" class="sr-only" role="status"></p>
   <GaugeControls />

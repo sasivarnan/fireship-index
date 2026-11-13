@@ -7,63 +7,43 @@ interface Props {
 const { index } = Astro.props;
 ---
 
-<details id="method" class="about">
-  <summary>About the index</summary>
-  <p>
-    This is a joke, not a forecast. The Fireship Index measures AI coverage in
-    recent videos from{" "}
+<section id="method" class="about" aria-labelledby="about-title">
+  <h2 id="about-title">About the index</h2>
+  <div class="about-grid">
+    <div>
+      <h3>The signal</h3>
+      <p>
+        Titles and descriptions from up to 15 recent uploads are checked for AI
+        terms. Keyword checks can miss context.
+      </p>
+    </div>
+    <div>
+      <h3>The score</h3>
+      <p>
+        60% AI coverage, 40% posting pace. More AI uploads, more often, means a
+        higher score.
+      </p>
+    </div>
+    <div>
+      <h3>The joke</h3>
+      <p>
+        Satire, not a forecast of job losses or extinction. Independent and not
+        affiliated with Fireship.
+      </p>
+    </div>
+  </div>
+  <p class="about-source">
+    Source:{" "}
     <a
-      href="https://www.youtube.com/@Fireship"
+      href="https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA"
       target="_blank"
       rel="noopener noreferrer"
     >
-      Fireship
+      YouTube RSS
     </a>
-    . It does not measure job losses or the chance of human extinction. This
-    project is independent and is not affiliated with Fireship.
+    . Cached for 15 minutes. The last valid feed stays available during outages.
   </p>
-  <p>
-    Titles and descriptions are checked for AI terms and model names. Sponsor
-    calls to action, course links, and repeated channel text are excluded where
-    possible. Each matching video lists its terms and their source. These rules
-    can miss context.
+  <p id="sample-period" class="about-period">
+    {samplePeriod(index)}
   </p>
-  <p>
-    The latest 15 available uploads count, regardless of age. A shorter feed
-    uses its available count. Score = 100 × (0.6 × AI share + 0.4 × min(AI
-    uploads per week ÷ 3, 1)), rounded. AI share is matched uploads ÷ sampled
-    uploads. The sample period starts at the oldest included upload and ends at
-    the calculation time, with a minimum of one day. An empty sample has no
-    score.
-  </p>
-  <p id="sample-period">{samplePeriod(index)}</p>
-  <p>
-    Cloudflare fetches the original RSS feed from YouTube. The page and{" "}
-    <a href="/api/feed">feed API</a> use the same saved data. Cached results are
-    checked for renewal after 15 minutes when requested. The last valid feed is
-    kept during an outage. The check time is shown above. No external relay or
-    AI model is used.
-  </p>
-  <details class="import-panel">
-    <summary>Import the original RSS file</summary>
-    <p>
-      You can also save{" "}
-      <a
-        href="https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Fireship’s RSS feed
-      </a>{" "}
-      as XML and select it below. This local preview stays in your browser and
-      does not change the public index.
-    </p>
-    <label for="feed-file">Fireship RSS file</label>
-    <input
-      id="feed-file"
-      type="file"
-      accept=".xml,.rss,.atom,text/xml,application/xml,application/atom+xml"
-    />
-    <p id="import-status" role="status"></p>
-  </details>
-</details>
+</section>

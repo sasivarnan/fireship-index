@@ -1,9 +1,10 @@
+import { MAX_FEED_SIZE } from "./settings.ts";
 import { XMLParser } from "fast-xml-parser";
 import { SyntaxValidator } from "fast-xml-validator";
 import { CHANNEL_URL, validateVideos } from "../index.ts";
 
 export function parseXml(xml: string, now = Date.now()) {
-  if (xml.length > 2_000_000 || /<!DOCTYPE|<!ENTITY/i.test(xml))
+  if (xml.length > MAX_FEED_SIZE || /<!DOCTYPE|<!ENTITY/i.test(xml))
     throw new Error("Invalid RSS document.");
   if (SyntaxValidator.validate(xml) !== true)
     throw new Error("Invalid RSS XML.");

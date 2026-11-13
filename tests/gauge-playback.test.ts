@@ -32,6 +32,7 @@ function setup(t: TestContext, reducedMotion = false) {
       "gauge-pause",
       "gauge-replay",
       "gauge-progress",
+      "status-ribbon",
     ].map((id) => [id, new GaugeElement()]),
   );
   const get = (id: string) => elements.get(id)!;

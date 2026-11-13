@@ -9,6 +9,7 @@ export const keywordRules: [string, RegExp][] = [
   ["ChatGPT", /\bChatGPT\b/i],
   ["OpenAI", /\bOpenAI\b/i],
   ["Anthropic", /\bAnthropic\b/i],
+  ["NVIDIA", /\bNVIDIA\b/i],
   ["Claude", /\bClaude\b/i],
   ["Gemini", /\bGemini\b/i],
   ["DeepSeek", /\bDeepSeek\b/i],

@@ -140,3 +140,122 @@
 
 - Replaced the hero explanation with the approved line: “AI’s future looks bright. We’re not in it.” Updated the editable social artwork and PNG to match.
 - All 39 tests and type, lint, formatting, and build checks passed. The selected copy was confirmed in the browser at 320 pixels wide without horizontal overflow. The ribbon still completed in its straight final state. Physical-device checks remain open.
+
+## Maintenance cleanup — 12 November 2026
+
+- Split the style entry into base, hero, gauge, controls, and content stylesheets. Kept component-specific responsive rules in order, combined reduced-motion overrides, and removed an unused colour variable and redundant mobile font rule.
+- Added shared browser-safe settings for sample size, cache expiry, refresh cooldown, request timeouts, and XML import size. Kept the XML parser behind the existing dynamic browser import.
+- Shared video card data between the Astro grid and browser refresh, including one upload-date formatter and the thumbnail attributes. Replaced feed-line string splitting with structured prefix, checked timestamp, and suffix fields.
+- Removed the pnpm lockfile and its formatting exclusion. npm and package-lock.json remain the package manager and lockfile. No dependencies were added.
+- All 42 tests and type, lint, formatting, build, and live Worker checks passed. New tests cover shared card metadata, lazy thumbnails, and structured feed timestamps.
+- Recorded selected positions, sizes, fonts, colours, and grid columns before the refactor at 1280 × 720, 320 × 740, and 568 × 320. These measurements matched afterward, excluding the arrow’s animated vertical position. Browser review confirmed the established appearance.
+- Initial server cards and refreshed browser cards had identical titles, dates, evidence, links, and thumbnail attributes. All 15 images retained lazy loading. Paused Refresh kept score 75, and the checked time remained local with GMT+5:30. Physical-device and screen-reader speech checks remain open.
+- Cleanup changes are local; no commit, push, or deployment was performed for this pass.
+
+## Status ribbon and title label — 12 November 2026
+
+- Moved the score status from inside the gauge to the ribbon below it. The ribbon uses the gauge status colour and dark text. Added a small “Unofficial” label below the site title. Removed the old status styles and ribbon text.
+- Kept the loose-board motion and straight finish. Browser checks confirmed that Pause held the same ribbon transform across observations and Resume finished at zero rotation. The gauge accessible label retains the status without duplicate ribbon speech.
+- All 42 tests and type, lint, formatting, build, and live Worker checks passed. Browser review at 1280 × 720, 320 × 740, and 568 × 320 confirmed readable text, clear ribbon spacing, full-screen hero height, and no horizontal overflow. The live score 75 used the matching coral colour.
+- Reduced-motion behaviour remains covered by unit tests and CSS; the browser system preference was not changed. Physical-device and screen-reader speech checks remain open. Changes are local; no commit, push, or deployment was performed.
+
+## Score context, video scanning, sharing, and quiet motion — 12 November 2026
+
+- Moved the sample summary below the ribbon without repeating it in the second fold. Kept the formula in About. Added saved-reading, unavailable-feed, and local-preview notices near the score, with extra space when needed. Refresh keeps the previous reading and original timestamp on failure.
+- Added a small colour marker and text label for AI matches. Native details controls reveal keyword sources on demand. Unmatched videos retain a plain text label. Server rendering and browser refresh use the same card data. Thumbnails retain lazy loading.
+- Added Share reading beside Refresh. Native sharing includes the actual target score, short joke, sample summary, checked time with timezone, satire label, and clean site URL. Clipboard and selectable-text fallbacks cover unsupported or blocked APIs. Local previews disable sharing. Cancellation does not trigger copying. No score history was added.
+- Removed the critical marker pulses. The down arrow moves gently during the reveal and stops when the ribbon finishes straight. Pause, replay, visibility, and reduced-motion behaviour remain in place.
+- All 47 tests and type, lint, format, build, and live Worker checks passed. Sharing tests cover payloads, clean URLs, native sharing, cancellation, clipboard content, and blocked or missing APIs. Existing feed/cache tests cover retained readings on upstream failure.
+- Browser review covered 1280 × 720, 320 × 740, and 568 × 320. The hero retained full-screen height without horizontal overflow. Match details expanded correctly; Refresh retained score 75 and all 15 lazy-loaded cards. The final ribbon was fixed and the arrow animation was none. Screenshots are saved in /tmp/fireship-index-improved-hero.png and /tmp/fireship-index-improved-videos.png.
+- The device share request was invoked, but the browser automation could not complete or inspect the system share menu. Native delivery, real clipboard permissions, manual-copy focus on physical devices, screen-reader speech, and browser-level reduced motion remain unverified. The browser was reloaded after the native-share check. No commit, push, or deployment was performed.
+
+## Less first-screen text — 12 November 2026
+
+- Removed the hero subtitle and its unused responsive styles. Moved the sample summary back to the video section. Removed the summary prop from Gauge. The first screen keeps branding, headline, score, and ribbon; feed notices remain hidden unless needed. Sharing still reads the same summary element in its new location.
+- All 47 tests and type, lint, formatting, and build checks passed. Browser review at 1280 × 720, 568 × 320, and 320 × 740 confirmed clear ribbon spacing and a full-screen hero. The phone layout had no horizontal overflow, the summary was inside the video section, and the normal feed notice was hidden.
+- Updated the live HTML verifier to reject the old subtitle and require the summary after the video-section boundary. Physical-device and screen-reader speech checks remain open. No commit, push, or deployment was performed.
+
+## AI match tooltips — 13 November 2026
+
+- Replaced the expandable AI match panels with tooltip buttons. Shared presentation data supplies stable tooltip IDs for server rendering and browser refresh. Buttons use aria-describedby; explanations use role=tooltip. Tooltips appear on hover, focus, or click and close with Escape, focus exit, or an outside pointer action. Tooltip content remains hoverable and wraps within the card width without changing grid height.
+- All 47 tests and type, lint, formatting, and build checks passed. The live HTML verifier now checks tooltip markup and rejects the old match details element.
+- Browser checks confirmed click opening, Escape dismissal, and reopening through keyboard focus. At 320 pixels wide, the tooltip stayed between x=20 and x=300 without horizontal overflow. After Refresh, all 12 tooltip controls and all 15 lazy-loaded thumbnails remained intact; the new NVIDIA video showed its title and description match.
+- Pointer-hover rules were inspected in CSS; physical touch, screen-reader speech, and real-device hover behaviour remain unverified. Changes remain local. No commit, push, or deployment was performed.
+
+## Tooltip below the match label — 13 November 2026
+
+- Positioned match tooltips below the 44-pixel trigger so they do not cover the current video image, title, or date. Kept the existing CSS and TypeScript implementation without an external tooltip library.
+- All 47 tests and type, lint, formatting, and build checks passed. Browser checks at the normal desktop size and 320 × 740 confirmed the tooltip top equals the trigger bottom. The phone layout had no horizontal overflow. Physical-device checks remain open. No commit, push, or deployment was performed.
+
+## Compact video metadata — 13 November 2026
+
+- Put the upload date and match label in one shared metadata row in server HTML and refreshed cards. Kept the match button target at 44 pixels high and the tooltip below it. Tooltip width stays within the remaining card space.
+- All 47 tests and type, lint, formatting, and build checks passed. Desktop and 320-pixel browser checks confirmed equal date and label vertical centres, readable tooltips, and no horizontal overflow. After Refresh, all 15 metadata rows remained aligned and all thumbnails retained lazy loading. Physical-device checks remain open. Changes remain local; no commit, push, or deployment was performed.
+
+## Metadata space-between alignment — 13 November 2026
+
+- Aligned upload dates to the left and match labels to the right. Kept tooltips below the label and aligned their right edge within the card.
+- All 47 tests and type, lint, formatting, and build checks passed. Desktop and 320-pixel browser checks confirmed the label right edge matched the row right edge. The phone had no horizontal overflow. Changes remain local; no commit, push, or deployment was performed.
+
+## Tighter video bottom padding — 13 November 2026
+
+- Reduced video-card bottom padding from 22 to 10 pixels. All 47 tests and type, lint, formatting, and build checks passed. The browser confirmed 10-pixel computed padding and working tooltip dismissal. The feed used a labelled saved reading during this check. No commit, push, or deployment was performed.
+
+## Clearer last-reading notice — 13 November 2026
+
+- Removed the Saved reading label from the hero in server HTML and client updates. A failed feed refresh now says “Couldn’t refresh. Showing the last available reading.” beside the checked time. Age-only cache notices ask users to refresh without claiming a failed request. Local previews and a feed with no available reading retain their hero notices.
+- All 47 tests and type, lint, formatting, and build checks passed. Browser review used an actual stale feed response: the gauge notice was empty and hidden, while the checked-time line showed the approved explanation and original timestamp. No commit, push, or deployment was performed.
+
+## AI future headline — 13 November 2026
+
+- Added the approved headline “AI has a future. Are we in it?” and subtitle “An unofficial doom index from Fireship’s latest 15 uploads.” Kept the question italic and coloured to match the gauge. Updated sharing text, social image alt text, and SVG/PNG social artwork. No project dependency was added.
+- All 47 tests and type, lint, formatting, and build checks passed. Browser review at 1280 × 720, 320 × 740, and 568 × 320 confirmed readable copy without horizontal overflow and a full-screen first section. The social PNG was rendered and visually checked. Physical-device and screen-reader speech checks remain open. No commit, push, or deployment was performed.
+
+## Imagegen editorial layout and Google Fonts — 13 November 2026
+
+- Implemented the approved imagegen direction: branding across the top, editorial copy on the left, and the simple gauge on the right on desktop. Added HeroCopy as a separate component. Narrow portrait screens stack the content; short landscape uses two columns. Kept a full dynamic-viewport first section.
+- Added Newsreader regular and real italic for the headline, and Public Sans for interface text through Google Fonts with preconnect and display=swap. The gauge keeps locally hosted Barlow Condensed. Browser font checks reported both Google Fonts loaded. System fallbacks keep text available when the font service is unavailable; cross-site font caching is not assumed.
+- Replaced the subtitle with “Tracking AI coverage in Fireship’s latest 15 uploads.” Added Recent uploads below the centred down arrow. Kept the single gauge marker, score animation, status colours, straight ribbon finish, pause/replay, and quiet settled state. Updated the social SVG/PNG with the same copy and fonts. No project dependency was added.
+- All 47 tests and type, lint, formatting, and build checks passed. Live HTML checks now verify the Google Fonts links, separate copy component, source explanation, and scroll label.
+- Browser review covered 1280 × 720, 768 × 1024, 320 × 740, and 568 × 320 without horizontal overflow. The hero height matched the viewport. Pause held an intermediate score; Resume completed at 77 with a fixed ribbon and no arrow animation. The phone video section retained 12 tooltips and 15 lazy-loaded thumbnails. The social artwork was rendered and visually checked.
+- The feed used its last available reading with the explanatory notice beside the checked time. Physical devices, screen-reader speech, font-service outage emulation, and browser-level reduced motion remain unverified. Reduced motion remains covered by the existing unit tests and CSS. No commit, push, or deployment was performed.
+
+## Direct purpose copy and Fraunces — 13 November 2026
+
+- Applied both approved changes: Fraunces Medium with real italic from Google Fonts, and the headline “How much AI is Fireship posting?” The supporting line explains “An unofficial index of AI coverage and posting pace across his latest 15 uploads.” Public Sans remains the body font and Barlow Condensed remains the gauge font. The gauge and ribbon carry the humour.
+- Used restrained Fraunces softness with its alternate letterforms. Updated sharing text, image alt text, and social SVG/PNG. Adjusted responsive headline sizes to keep the question readable on narrow screens.
+- All 47 tests and type, lint, formatting, and build checks passed. Browser review at 1280 × 720, 320 × 740, and 568 × 320 confirmed loaded regular and italic fonts, full-screen hero height, and no horizontal overflow. The social artwork was rendered and visually checked. Physical-device checks remain open. No commit, push, or deployment was performed.
+
+## Quiet arrow, open About, and server-only RSS — 13 November 2026
+
+- Removed the visible Recent uploads caption and its unused styles. The arrow remains a 48 × 48 control with the accessible name Scroll to recent videos. Its reveal motion and settled pause behaviour remain in place.
+- Replaced the About accordion with an open section: The signal, The score, and The joke. Kept the source, cache fallback, scoring period, and independence notice. Removed the long repeated explanations and manual file importer. Desktop uses three short columns; phones stack them.
+- Removed browser file-input handling, local-preview state, and the browser XML-parser import. RSS parsing stays on the server, which already stores the last valid feed. Removed obsolete import suggestions from error messages. Server XML validation and its tests remain intact.
+- All 47 tests and type, lint, formatting, build, and live Worker checks passed. Browser review at 1280 × 720 and 320 × 740 confirmed open About content, no importer, no visible arrow caption, and no horizontal overflow. Refresh completed with 15 cards and the original check time while showing the saved feed notice.
+- Generated and corrected an imagegen concept for the below-fold video design. This remains a preview, not the implemented grid. Its sample rows illustrate the design; production continues to show the actual 15-upload feed. Physical-device and screen-reader speech checks remain open. No commit, push, or deployment was performed.
+
+## Fewer dividers — 13 November 2026
+
+- Removed divider rules below the video heading, below video items, and above the footer. Kept only the divider before About the index. Existing spacing, compact metadata, and tooltips remain unchanged.
+- All 47 tests and type, lint, formatting, and build checks passed. Browser inspection confirmed zero-width heading, card, and footer borders and the one-pixel About top border. The 320-pixel layout had no horizontal overflow. Changes remain local; no commit, push, or deployment was performed.
+
+## Video title spacing — 13 November 2026
+
+- Reserved a minimum of three title lines in multi-column layouts without clipping text. Reduced video row gaps to 24 pixels. Phone titles keep their natural height.
+- All 47 tests and type, lint, formatting, and build checks passed. Browser measurements at 1280, 768, and 581 pixels wide confirmed aligned metadata within each row for the current feed. At 320 pixels, title minimum height remained auto, full text stayed visible, and there was no horizontal overflow.
+- The review showed visible empty space under short titles with a fixed three-line minimum. Natural title heights with metadata aligned to each row’s bottom were recommended as a possible follow-up; that further change was not made. No commit, push, or deployment was performed.
+
+## Natural video titles with aligned metadata — 13 November 2026
+
+- Replaced the fixed three-line title minimum with natural title heights. Multi-column cards use a column layout with metadata pushed to the row bottom. Full titles remain visible; phones keep their existing natural layout.
+- All 47 tests and type, lint, formatting, and build checks passed. At 1280 pixels, browser measurements showed one- and two-line title heights while metadata bottoms matched within each row. At 320 pixels, cards remained list items, title minimum height was auto, and no horizontal overflow occurred.
+- Discussed a possible AI spotted thumbnail sticker. No overlay was implemented. No commit, push, or deployment was performed.
+
+## RSS recovery and diagnostics — 13 November 2026
+
+- Confirmed the original Fireship channel page still advertises the configured RSS URL. Direct requests from this machine returned HTTP 404 with the current, identified-client, and browser-style headers. A header change did not resolve it. The feed subsequently recovered during verification.
+- Added structured failure logging before the saved-feed return. Logs include source URL, upstream HTTP status, attempt count, failure reason, fallback use, and original successful fetch time. No response body is logged.
+- Added one retry for transient HTTP 404, 408, and server errors. Both attempts share the existing eight-second timeout. Retry-After responses and HTTP 429 are not immediately retried. Invalid data and timeouts preserve the last good feed and its original timestamp.
+- All 53 tests and type, lint, formatting, build, and live Worker checks passed. New tests cover 404 recovery, persistent failure diagnostics, rate limits, Retry-After, invalid XML, timeout logs, and unchanged fallback timestamps.
+- The live API eventually returned stale=false and a newer fetchedAt timestamp. Rendered HTML showed the current checked time without the refresh-failure message. The in-app browser was unavailable, so interactive Refresh and a new browser screenshot were not verified in this pass. No UI layout was changed.
+- These changes improve retries and diagnostics; they do not establish a permanent fix for YouTube’s intermittent upstream failures. No commit, push, or deployment was performed.

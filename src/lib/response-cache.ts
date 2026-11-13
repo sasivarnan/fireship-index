@@ -1,4 +1,8 @@
-import { REVALIDATE_SECONDS } from "./feed-service.ts";
+import {
+  REVALIDATE_SECONDS,
+  RESPONSE_CACHE_SECONDS,
+  STALE_RETRY_MS,
+} from "./settings.ts";
 
 export interface ResponseStore {
   match(request: Request): Promise<Response | undefined>;
@@ -26,7 +30,10 @@ export async function cachedResponse(options: {
     result.headers.set("X-Index-Cache", "MISS");
     if (result.status === 200 && !result.headers.has("Set-Cookie")) {
       const stored = result.clone();
-      stored.headers.set("Cache-Control", "public, max-age=86400");
+      stored.headers.set(
+        "Cache-Control",
+        `public, max-age=${RESPONSE_CACHE_SECONDS}`,
+      );
       stored.headers.set("X-Generated-At", String(now));
       try {
         await cache.put(key, stored);
@@ -44,7 +51,7 @@ export async function cachedResponse(options: {
   const fresh =
     generatedAt > 0 &&
     (saved.headers.get("X-Feed-Stale") === "1"
-      ? now - generatedAt < 60_000
+      ? now - generatedAt < STALE_RETRY_MS
       : age < REVALIDATE_SECONDS * 1000);
   const result = new Response(saved.body, saved);
   result.headers.set("Cache-Control", "no-store");

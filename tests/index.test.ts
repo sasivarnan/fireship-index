@@ -23,6 +23,9 @@ const video = (
 
 test("AI detection uses word boundaries and handles named models", () => {
   assert.deepEqual(matchKeywords("Email fails again"), []);
+  assert.deepEqual(matchKeywords("Nvidia announces new chips"), ["NVIDIA"]);
+  assert.deepEqual(matchKeywords("nvidia and NVIDIA"), ["NVIDIA"]);
+  assert.deepEqual(matchKeywords("NotNvidia"), []);
   assert.deepEqual(matchKeywords("AI agents meet Claude and GPT-5"), [
     "AI",
     "GPT",
@@ -78,6 +81,12 @@ test("descriptions identify AI coverage when the title does not", () => {
   assert.deepEqual(result.titleMatches, []);
   assert.deepEqual(result.descriptionMatches, ["Claude"]);
   assert.equal(calculateIndex(videos, now).matched.length, 1);
+  assert.deepEqual(
+    classifyVideos([
+      video("New chips", 1, "abcdefghijk", "Nvidia announces a new processor."),
+    ])[0].descriptionMatches,
+    ["NVIDIA"],
+  );
 });
 
 test("sponsors, links, and channel promotions do not count", () => {

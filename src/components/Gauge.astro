@@ -2,8 +2,9 @@
 import { gaugeAngle, gaugePoint, gaugeState } from "../lib/gauge.ts";
 interface Props {
   score: number | null;
+  note: string;
 }
-const { score } = Astro.props;
+const { score, note } = Astro.props;
 const index = { score };
 const state = gaugeState(score);
 const start = gaugePoint(0, 248);
@@ -40,10 +41,12 @@ const arc = `M${start.x} ${start.y} A248 248 0 1 1 ${end.x} ${end.y}`;
     <span>0</span>
     <span>100</span>
   </div>
-  <div class="gauge-status" aria-hidden="true">
+  <p id="status-ribbon" class="status-ribbon" aria-hidden="true">
     <span id="gauge-state">{state.label}</span>
-  </div>
-  <p id="unofficial-ribbon" class="unofficial-ribbon">
-    VERY UNOFFICIAL
   </p>
+  <div class="gauge-caption">
+    <p id="reading-note" hidden={!note}>
+      {note}
+    </p>
+  </div>
 </div>

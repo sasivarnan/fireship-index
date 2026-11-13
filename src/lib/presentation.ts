@@ -1,3 +1,4 @@
+import { SAMPLE_SIZE } from "./settings.ts";
 import type { calculateIndex } from "../index.ts";
 
 type Index = ReturnType<typeof calculateIndex>;
@@ -9,7 +10,8 @@ export function sampleSummary(index: Index): string {
 }
 
 export function samplePeriod(index: Index): string {
-  if (!index.sample.length) return "The score uses up to 15 available uploads.";
+  if (!index.sample.length)
+    return `The score uses up to ${SAMPLE_SIZE} available uploads.`;
   const dates = new Intl.DateTimeFormat("en", {
     month: "short",
     day: "numeric",
@@ -72,13 +74,13 @@ export function checkedTime(
   return `${date} ${zone}`;
 }
 
-export function feedLine(
+export function feedStatusParts(
   index: Index,
   fetchedAt: number,
   stale: boolean,
   missing: number,
   timeOptions: CheckedTimeOptions = {},
-): string {
+) {
   const dates = new Intl.DateTimeFormat("en", {
     month: "short",
     day: "numeric",
@@ -97,5 +99,21 @@ export function feedLine(
         new Date(index.sample[0].published),
       ) + " · "
     : "";
-  return `${range}Checked ${checkedTime(fetchedAt, timeOptions)}${stale ? " · Saved reading" : ""}${missing ? ` · ${missing} missing descriptions; titles used` : ""}`;
+  return {
+    prefix: `${range}Checked `,
+    checked: checkedTime(fetchedAt, timeOptions),
+    checkedAt: new Date(fetchedAt).toISOString(),
+    suffix: `${stale ? " · Couldn’t refresh. Showing the last available reading." : ""}${missing ? ` · ${missing} missing descriptions; titles used` : ""}`,
+  };
+}
+
+export function feedLine(
+  index: Index,
+  fetchedAt: number,
+  stale: boolean,
+  missing: number,
+  timeOptions: CheckedTimeOptions = {},
+): string {
+  const parts = feedStatusParts(index, fetchedAt, stale, missing, timeOptions);
+  return parts.prefix + parts.checked + parts.suffix;
 }
