@@ -259,3 +259,11 @@
 - All 53 tests and type, lint, formatting, build, and live Worker checks passed. New tests cover 404 recovery, persistent failure diagnostics, rate limits, Retry-After, invalid XML, timeout logs, and unchanged fallback timestamps.
 - The live API eventually returned stale=false and a newer fetchedAt timestamp. Rendered HTML showed the current checked time without the refresh-failure message. The in-app browser was unavailable, so interactive Refresh and a new browser screenshot were not verified in this pass. No UI layout was changed.
 - These changes improve retries and diagnostics; they do not establish a permanent fix for YouTube’s intermittent upstream failures. No commit, push, or deployment was performed.
+
+## Restore pnpm — 13 November 2026
+
+- Pinned pnpm 12.18.0. Restored the original dependency lockfile and added the package manager record required by this version. Dependency versions are unchanged. Removed the npm lockfile and changed active commands to pnpm.
+- Added explicit build permissions for esbuild, sharp, and workerd. Replaced the dependency folder with a clean frozen-lockfile install.
+- Reduced the README to short setup, check, deployment, and scoring instructions in Simplified Technical English. Use `pnpm run deploy` to run the project deployment script.
+- All 53 tests and type, lint, formatting, build, and live Worker checks passed with pnpm. Runtime checks covered 15 feed entries with descriptions, server HTML, API and HTML cache hits, and the 404 page. No visual changes were made. No new browser or physical-device checks were run.
+- Changes remain local. No commit, push, or deployment was performed.

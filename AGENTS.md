@@ -9,6 +9,6 @@
 - Do not invent live data, predictions, endorsements, rankings, or a public domain.
 - Use `SITE_URL` for domain-specific metadata. Deploy the Astro Worker with Wrangler only when requested. Keep Cloudflare KV for the last-good feed snapshot.
 - Keep the Built by Sasivarnan R footer linked to https://sasivarnan.com.
-- Run `npm run check` after changes. Build before production browser checks.
+- Use pnpm and keep `pnpm-lock.yaml` as the only lockfile. Run `pnpm check` after changes. Build before production browser checks.
 - Record browser checks and limits in `docs/ux-audit.md`.
 - Treat commit, push, and deployment as separate actions. Do each only when requested.
