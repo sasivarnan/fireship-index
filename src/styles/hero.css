@@ -82,7 +82,7 @@ h1 {
 .hero-premise {
   margin: 0;
   color: var(--ink);
-  font-family: "Fraunces", Georgia, serif;
+  font-family: "Allo", system-ui, sans-serif;
   font-size: clamp(30px, 5vw, 54px);
   font-weight: 500;
   font-optical-sizing: auto;

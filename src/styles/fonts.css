@@ -7,6 +7,14 @@
 }
 
 @font-face {
+  font-family: "Allo";
+  font-style: italic;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../assets/fonts/Allo-MediumOblique.woff2") format("woff2");
+}
+
+@font-face {
   font-family: "Barlow Condensed";
   font-style: normal;
   font-weight: 600;

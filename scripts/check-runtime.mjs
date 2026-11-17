@@ -90,8 +90,10 @@ assert.match(html, /class="unofficial-label">Unofficial/);
 assert.match(html, /id="status-ribbon"/);
 assert.match(html, /class="gauge-caption"/);
 assert.match(html, /How much AI is/);
-assert.match(html, /fonts.googleapis.com/);
-assert.match(html, /family=Fraunces/);
+assert.doesNotMatch(
+  html,
+  /fonts\.googleapis\.com|fonts\.gstatic\.com|Fraunces/,
+);
 assert.doesNotMatch(html, /Public\+Sans|Public Sans/);
 const bodyFontPath = html.match(
   /href="([^"]*AlloVariableFriendly[^"]*\.woff2)"/,
