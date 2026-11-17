@@ -51,9 +51,8 @@ Store errors are logged. A valid upstream reading can still be shown, but storag
 must work to keep that reading for later requests or other function instances.
 The new store starts empty; existing KV or Redis snapshots are not copied automatically.
 
-The production URL in `astro.config.mjs` still points to the current Workers site.
-Set the confirmed replacement URL there before production release.
-Metadata, robots, and sitemap all use this value.
+The production URL is `https://fireship-index.vercel.app`. It is set once in
+`astro.config.mjs`. Metadata, robots, and sitemap all use this value.
 
 Deployment, DNS changes, commits, and pushes require separate requests.
 Keep the existing Cloudflare deployment and snapshot until the Vercel release is accepted.
@@ -80,6 +79,6 @@ Refresh can still attempt recovery through the API during this interval.
 If YouTube fails, the last valid reading stays visible with its original check time.
 
 Keep `pnpm-lock.yaml` as the only package lockfile.
-See [asset credits](docs/brand-assets.md) and [check records](docs/ux-audit.md).
+See [asset credits](docs/brand-assets.md) and [current check records](docs/ux-audit.md).
 
 Built by [Sasivarnan R](https://sasivarnan.com).

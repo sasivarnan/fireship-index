@@ -13,7 +13,8 @@ if (configuredOrigin) {
 }
 export const site = {
   name: "The Fireship Index",
+  title: "The Fireship Index | Unofficial AI Coverage Score",
   description:
-    "A satirical score based on how often Fireship covers AI. Recent YouTube videos, checked using titles and descriptions.",
+    "An unofficial, satirical score of AI coverage and posting pace across up to 15 recent Fireship YouTube uploads, using titles and descriptions.",
   origin: configuredOrigin ? new URL(configuredOrigin).origin : undefined,
 };

@@ -48,7 +48,7 @@ const schema = {
   rel="stylesheet"
 />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>{site.name}</title>
+<title>{site.title}</title>
 <meta name="description" content={site.description} />
 <meta name="theme-color" content="#10212d" />
 <meta
@@ -60,7 +60,7 @@ const schema = {
 {canonical && <link rel="canonical" href={canonical} />}
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <meta property="og:type" content="website" />
-<meta property="og:title" content={site.name} />
+<meta property="og:title" content={site.title} />
 <meta property="og:site_name" content={site.name} />
 <meta property="og:description" content={site.description} />
 {canonical && <meta property="og:url" content={canonical} />}
@@ -74,7 +74,7 @@ const schema = {
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content={site.name} />
+<meta name="twitter:title" content={site.title} />
 <meta name="twitter:description" content={site.description} />
 {site.origin && (
   <meta name="twitter:image" content={`${site.origin}/social.png`} />

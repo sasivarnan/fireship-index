@@ -41,7 +41,9 @@ const { index } = Astro.props;
     >
       YouTube RSS
     </a>
-    . Cached for 15 minutes. The last valid feed stays available during outages.
+    . Updates are checked on request after 15 minutes, not on a fixed schedule.
+    Use Refresh to check the feed. Saved readings keep their original check time
+    during outages.
   </p>
   <p id="sample-period" class="about-period">
     {samplePeriod(index)}

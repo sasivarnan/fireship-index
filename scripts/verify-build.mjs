@@ -45,6 +45,15 @@ const origin = new URL(astroConfig.site).origin;
 assert.ok(robots.includes(`Sitemap: ${origin}/sitemap.xml`));
 const sitemap = await readFile(".vercel/output/static/sitemap.xml", "utf8");
 assert.ok(sitemap.includes(`<loc>${origin}/</loc>`));
+const overview = await readFile(".vercel/output/static/llms.txt", "utf8");
+assert.match(overview, /Vercel ISR/);
+assert.match(overview, /private Vercel Blob/);
+assert.match(overview, /900 seconds \(15 minutes\)/);
+assert.match(overview, /Cache-Control: no-store/);
+assert.doesNotMatch(
+  overview,
+  /Cloudflare fetches|saved in KV|Cloudflare location/,
+);
 const page = await readFile("src/pages/index.astro", "utf8");
 assert.match(page, /IndexHero/);
 assert.match(page, /RecentVideos/);

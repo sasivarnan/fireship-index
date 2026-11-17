@@ -1,340 +1,42 @@
 # Verification
 
-## First version — 6 November 2026
-
-- Single static page; all keyword matching, scoring, parsing, and caching run in the browser.
-- Live Fireship RSS returned HTTP 200. Direct browser access is blocked by missing CORS permission. The rss2json relay returned HTTP 200 with browser access permission.
-- Production static build loaded real relay data in the browser. Ten uploads were returned in this check. Titles, thumbnails, dates, keyword reasons, score, metrics, and activity chart appeared.
-- AI-only filter showed five matched uploads; every visible row had the AI signal label.
-- Original Fireship XML import succeeded with 15 uploads. The score recalculated and old entries were marked outside the score window. Imported files stay local.
-- Desktop appearance reviewed at 1280 × 800. Gauge pointer adjusted to keep the numeric score clear.
-- Narrow-screen review at 320 × 740 found a decorative symbol outside the page width. Its small-screen position was corrected.
-- Rechecked the production build at widths of 320, 768, and 844 pixels. Document width matched the viewport width in each check.
-- Browser fetch time is distinguished from source freshness. The relay can cache and truncate results. The UI does not claim the feed contains the complete channel history.
-- Initial HTML includes the title, description, method, FAQ, attribution, source links, and WebSite JSON-LD. Scores are not fabricated in static HTML.
-- Canonical URL, absolute social image URLs, and sitemap generation verified using a temporary test origin. Final build has no invented public origin.
-- Type, lint, formatting, unit tests, and generated static HTML checks passed.
-
-## Limits
-
-- No deployment or public domain selected. Set `SITE_URL` at build time before release.
-- Real-phone behavior and screen-reader speech output are not verified.
-- Search indexing and answer-engine citations require a public deployment and are not guaranteed.
-- Relay and YouTube uptime, rate limits, and cache policy are external dependencies.
-
-## Minimal revision — 6 November 2026
-
-- Replaced the dashboard with a narrow, plain page: one score, a short status, recent video links, About disclosure, and the required footer.
-- Removed the gauge, chart, badges, filters, thumbnails, external fonts, decorative sections, and separate FAQ. Kept indexable project and method text in the initial HTML.
-- Replaced the JSON relay with the original XML through proxy.cors.dev. The JSON relay had omitted descriptions. The XML proxy returned HTTP 200 with CORS permission and full descriptions.
-- Classification now uses titles and descriptions. Sponsor calls to action, course links, and repeated channel paragraphs are excluded where possible. AI labels identify the source of each match. Missing descriptions are reported.
-- Added tests for description-only matches, sponsor exclusions, repeated paragraphs, title matches with promotional descriptions, and legacy records.
-- Production browser check loaded 15 original RSS entries with descriptions. A cybersecurity video matched Anthropic and Claude only in its description; it now counts correctly.
-- The programmer-stereotypes video did not match AI in either its title or description; the unrelated search-API sponsor did not affect the result.
-- Rechecked the minimal production page at 320 and 768 pixels wide; neither had horizontal overflow. Reviewed the 1280-pixel desktop layout.
-- All ten unit tests, type, lint, format, build, and static metadata verification passed. Real-phone and screen-reader speech checks remain open.
-
-## Astro and Workers revision — 12 November 2026
-
-- User approved migration from browser-only fetching to an RSS API and cached HTML, then selected Astro on Cloudflare Workers instead of Pages.
-- Added a warm colour accent, small flame mark, compact score scale, thumbnails, and restrained hover changes. Kept one public content page and the required footer.
-- Moved the score and video list into server-rendered HTML. `/api/feed` uses the same validated data and classification rules. Removed the public CORS relay.
-- Added a last-good RSS snapshot in KV and explicit 15-minute stale-while-revalidate response caching. Deployment-specific cache keys prevent old HTML from using old asset filenames. Failed refreshes do not overwrite valid cache entries.
-- Added server tests for description parsing, invalid XML/channel rejection, fresh/expired snapshots, outage fallback, cold failure, HTML cache hits, background regeneration, and preservation of valid cached HTML on errors.
-- Updated build and deployment instructions for Cloudflare Workers. Current Astro requires Node 22.23.4 or later; local verification uses a separate temporary runtime rather than changing the user's installed Node.
-- Production deployment, real-phone behavior, and screen-reader speech output remain unverified.
-- Live local Worker verification returned 15 YouTube RSS entries with descriptions and score 73. Raw HTML contained the score and all 15 video links before browser JavaScript. Repeat HTML and API requests returned cache hits; missing paths returned 404.
-- Browser Refresh succeeded against the API. Desktop appearance and 320- and 768-pixel layouts were reviewed; neither small layout had horizontal overflow.
-- Found and fixed a Worker runtime incompatibility: redirect mode `error` is unsupported. Requests now use `manual` and reject unexpected redirects. Added a regression test.
-
-## Gauge and component revision — 12 November 2026
-
-- Replaced the early bunker panel with a simple arc, large locally hosted type, a moving marker, and one short animated status. Removed casing, grid, rivets, extra scale markings, and warning graphics after visual feedback.
-- Added the Fireship source logo, project title, and brief explanation above the fold. The hero uses a deep navy palette, warm ivory numbers, and high-contrast green, amber, orange, or coral accents based on score. The content below uses a warm light background.
-- Increased captions and endpoint labels to readable HTML text rather than shrinking them inside SVG. Increased video, method, and footer text sizes.
-- Split metadata, hero, source header, gauge, controls, recent videos, method, and footer into separate Astro components.
-- Moved keyword rules and description classification into `src/lib/keywords.ts`, with no scoring or classification changes.
-- Added tests for gauge thresholds, angle limits, and monotonic number animation. All 23 unit tests and the type, lint, format, and build checks passed before final browser review.
-- The live runtime check accounts for valid stale-while-revalidate behavior: HTML and API snapshots can differ during refresh. Each server-rendered number is checked against its own embedded target, and matching feed timestamps must produce matching HTML/API scores.
-- At 1280 × 720 and 320 × 740, hero height matched viewport height and recent content started below the fold. At 320 pixels, no horizontal overflow was present. Pause stopped the number and the pulsing arrow during the control check.
-- Physical-device behavior and screen-reader speech output remain unverified. Reduced-motion handling is implemented in CSS and playback code; the browser's system preference was not changed during this review.
-
-- Final saved-project checks passed: all 23 tests, type, lint, formatting, build verification, and live Worker checks. The feed returned 15 entries with descriptions and score 79.
-- Final browser review covered 1280 × 720, 320 × 740, and 568 × 320. The hero matched viewport height and had no horizontal overflow. The small landscape layout kept the source header, score, status, and controls visible.
-- Replay restarted the count. Pause held the displayed score at 31 across observations; resume restored playback. The down arrow moved focus to recent videos. The final displayed score matched the target of 79.
-
-## Intro refinement — 12 November 2026
-
-- Replaced the long hero paragraph with “More AI. Less us.” and a short explanation. Used serif type and an italic signal-colour accent to give the intro a clear hierarchy.
-- All 23 tests and type, lint, formatting, and build checks passed. Browser review covered 1280 × 720, 320 × 740, and 568 × 320. The intro remained legible and the mobile hero retained its full viewport height without horizontal overflow. Physical-device checks remain open.
-
-## Evidence, feed status, and motion — 12 November 2026
-
-- Added a small marker overshoot and exact settling, plus two soft marker pulses for critical scores. Numeric values stay monotonic. Pause, page visibility, off-screen suspension, and reduced motion continue to control playback.
-- Made title and description match terms visible below video titles. Marked older uploads outside the 30-day score window. The summary now states the window and counts only available videos in that window.
-- Improved title hierarchy, spacing, date contrast, and thumbnail size. Added a matching 1200 × 630 social image with an unknown score so it cannot be confused with a current reading. The editable artwork is public/social.svg.
-- Refresh keeps the reading visible and states its last UTC check time. The local browser failure check kept score 79, all 15 rows, and the exact original fetch timestamp after the preview server was stopped. A successful refresh also retained visible match evidence and window labels.
-- Added coverage for marker settling and bounds, sample-window copy, evidence sources, and stale timestamps. All 27 tests and type, lint, format, and build checks passed before final layout polish.
-- Desktop 1280 × 720 and mobile 320 × 740 were reviewed. The mobile list had no horizontal overflow. Physical devices and screen-reader speech remain unverified. Browser system reduced-motion preferences were not changed.
-
-- Final checks after mobile evidence spacing passed: 27 tests, type, lint, format, build, and live Worker checks including the 1200 × 630 share image. The final browser review covered desktop, 320-pixel mobile, and 568 × 320 landscape. The hero stayed full height. Pause held the score at 31 across observations; resume completed at the target of 79 with the settled state set.
-
-## Laws of UX follow-up — 12 November 2026
-
-- Fixed the reproduced pause → Refresh error. A paused refresh now shows the actual reading immediately and preserves pause. Unchanged refreshes do not restart a completed gauge; Replay explicitly starts and resumes playback.
-- Added “AI coverage · past 30 days · satire” near the gauge, the 15-minute cache renewal explanation beside feed status, and visible Replay/Pause/Resume labels on hover or keyboard focus. Restored the landscape logo link to 44 × 44 pixels.
-- Combined repeated evidence terms while preserving their sources, such as “Anthropic — title and description”. Server and browser rendering use the same formatter.
-- Added regression tests for completed and partial paused refreshes, changed scores while paused, unchanged refresh, and Replay. All 31 tests and type, lint, format, build, and live Worker checks passed.
-- Browser checks confirmed paused Refresh retained visible score 79 and target 79 after completion. An unpaused unchanged refresh also retained 79 with its settled state. Keyboard focus showed the Replay and Pause labels. Desktop 1280 × 720, mobile 320 × 740, and landscape 568 × 320 were reviewed; mobile had no horizontal overflow and the hero stayed full height. Landscape logo height measured 44 pixels.
-- Physical-device behavior, screen-reader speech, and browser system reduced-motion preference checks remain open.
-
-## Landscape composition — 12 November 2026
-
-- Added two columns for landscape viewports at least 568 pixels wide and at most 600 pixels high. Branding and left-aligned text sit beside the gauge. The headline uses two lines, and the gauge scales to its column.
-- Kept the first section at full viewport height, the down arrow at the viewport centre, and recent videos below the fold. Portrait and taller desktop layouts retain the centred composition.
-- All 31 tests and type, lint, formatting, and build checks passed. Browser review covered 568 × 320, 844 × 390, 1024 × 600, 1280 × 720, and 320 × 740. No horizontal overflow was observed. At 844 × 390, hero height and video start were 390 pixels; arrow centre was 422 pixels in an 844-pixel viewport.
-- Physical-device and screen-reader speech checks remain open.
-
-## Human-focused headline — 12 November 2026
-
-- Changed the hero and social preview headline to “More AI. Fewer humans.” and updated image alternative text. Kept the italic phrase together when wrapping.
-- All 31 tests and type, lint, formatting, and build checks passed. Browser review at 320 × 740, 568 × 320, and 1280 × 720 confirmed readable wrapping and no horizontal overflow. The share image was visually reviewed. Physical-device checks remain open.
-
-## Latest-15 scoring and video grid — 12 November 2026
-
-- Replaced the 30-day selection rule with the latest 15 unique, published uploads. Older uploads remain eligible. Short feeds use their available count; empty feeds have no score. Kept the 60% AI-share and 40% posting-pressure weights, with pace measured from the oldest sampled upload through the calculation time.
-- Updated the gauge caption, visible summary, sample dates, method, README, and LLM overview. Server and browser rendering use the same scoring and presentation functions.
-- Replaced VideoList with VideoGrid. The grid has three columns on wide screens, two on tablets, and one on phones. All thumbnails remain visible on phones and use native lazy loading, asynchronous decoding, low fetch priority, and reserved 16:9 dimensions. Browser refresh sets lazy-loading options before assigning image URLs. Native lazy loading permits browser prefetch near the viewport.
-- Added scoring coverage for more than 15 unsorted uploads, older eligible uploads, shorter feeds, duplicate/future/invalid dates, sample dates, and actual sample captions. All 34 tests and type, lint, format, build, and live Worker checks passed.
-- Browser checks at 1280 × 720, 768 × 1024, and 320 × 740 confirmed three, two, and one grid columns without horizontal overflow. All 15 thumbnails retained lazy/async settings after Refresh; the displayed score and summary remained 75 and 12 of 15. The server HTML and API also matched.
-- The full-screen hero and landscape composition were checked. Physical-device and screen-reader speech checks remain open. No deployment was performed.
-
-## Quieter copy and unofficial ribbon — 12 November 2026
-
-- Reduced the normal video introduction to one summary and a compact upload-range/check-time line. Moved detailed posting-period text into About the index; cache behaviour remains there. Saved readings, missing descriptions, and refresh failures remain visible when relevant.
-- Replaced match explanations with plain phrases such as “Anthropic in title and description”. Removed em dashes and duplicate AI labels from explanations. Server and browser refresh use the same formatter.
-- Removed the gauge caption and its unused sample-count props. Added a small, still, tilted “VERY UNOFFICIAL” ribbon at the top right. Portrait spacing keeps the ribbon clear of the logo and heading. The joke explanation remains at the start of About.
-- All 34 tests and type, lint, formatting, build, and live Worker checks passed. Browser review covered 1280 × 720, 320 × 740, and 568 × 320. The ribbon did not overlap essential content, the hero remained full-screen, and the mobile grid had no horizontal overflow.
-- Refresh completed with score 75 and 15 lazy-loaded cards. Match explanations contained no em dashes; detailed period text was inside About. Physical-device and screen-reader speech checks remain open.
-
-## Ribbon below the gauge — 12 November 2026
-
-- Moved the yellow unofficial ribbon below the gauge and centred it on the instrument. Removed the extra portrait top spacing used for its former corner position. Reserved lower gauge space to keep it clear of the scroll control.
-- All 34 tests and type, lint, formatting, and build checks passed. Browser review at 1280 × 720, 320 × 740, and 568 × 320 confirmed full-screen layout and a visible gap below the gauge labels. Measured gaps were about 24, 20, and 18 pixels respectively, including the ribbon tilt. Mobile had no horizontal overflow. Physical-device checks remain open.
-
-## Loose-sign ribbon animation — 12 November 2026
-
-- Added an 880 ms repair motion after the gauge settles: crooked hold, a corrective nudge, a brief catch, and a straight finish. The ribbon stays visible and ends at zero rotation. Unchanged refreshes do not replay it; Replay restarts the sequence.
-- Ribbon playback follows the existing pause, visibility, and off-screen rules. Reduced motion and paused data updates show a fixed ribbon directly. Added tests for trigger order and reduced-motion state, and checked the paused-update state. All 36 tests and type, lint, formatting, and build checks passed.
-- In the browser, pause held the ribbon at the same -3 degree transform across observations. Resume completed with an unrotated transform and fixed state. Desktop, 320 × 740 mobile, and 568 × 320 landscape were reviewed. The resting ribbon retained a clear gap below the gauge and mobile had no horizontal overflow.
-- The browser system reduced-motion preference was not changed; that path was checked in unit tests and CSS. Physical-device and screen-reader speech checks remain open.
-
-## Browser-local checked time — 12 November 2026
-
-- Added a shared checked-time formatter with a timezone label at the end. The server retains UTC HTML; a timestamp-backed time element is converted directly on browser load. Refresh, saved-reading, and failure messages use the browser’s timezone and language.
-- Added coverage for India time, US Central time, previous-day rollover, daylight saving, and stale/missing-description messages. All 39 tests and type, lint, formatting, build, and live Worker checks passed.
-- Browser review confirmed the source timestamp 2026-11-12T04:46:53.162Z displayed as Nov 12, 2026, 10:16 AM GMT+5:30 on initial load and after Refresh. The loading message also used this local time. The browser supplied GMT+5:30 instead of IST, as permitted by the approved native-label approach.
-- Desktop and 320-pixel mobile wrapping were checked without horizontal overflow. Other timezone and daylight-saving behaviour was tested through explicit formatter inputs; the browser timezone setting was not changed. Physical-device and screen-reader speech checks remain open.
-
-## Selected subtitle — 12 November 2026
-
-- Replaced the hero explanation with the approved line: “AI’s future looks bright. We’re not in it.” Updated the editable social artwork and PNG to match.
-- All 39 tests and type, lint, formatting, and build checks passed. The selected copy was confirmed in the browser at 320 pixels wide without horizontal overflow. The ribbon still completed in its straight final state. Physical-device checks remain open.
-
-## Maintenance cleanup — 12 November 2026
-
-- Split the style entry into base, hero, gauge, controls, and content stylesheets. Kept component-specific responsive rules in order, combined reduced-motion overrides, and removed an unused colour variable and redundant mobile font rule.
-- Added shared browser-safe settings for sample size, cache expiry, refresh cooldown, request timeouts, and XML import size. Kept the XML parser behind the existing dynamic browser import.
-- Shared video card data between the Astro grid and browser refresh, including one upload-date formatter and the thumbnail attributes. Replaced feed-line string splitting with structured prefix, checked timestamp, and suffix fields.
-- Removed the pnpm lockfile and its formatting exclusion. npm and package-lock.json remain the package manager and lockfile. No dependencies were added.
-- All 42 tests and type, lint, formatting, build, and live Worker checks passed. New tests cover shared card metadata, lazy thumbnails, and structured feed timestamps.
-- Recorded selected positions, sizes, fonts, colours, and grid columns before the refactor at 1280 × 720, 320 × 740, and 568 × 320. These measurements matched afterward, excluding the arrow’s animated vertical position. Browser review confirmed the established appearance.
-- Initial server cards and refreshed browser cards had identical titles, dates, evidence, links, and thumbnail attributes. All 15 images retained lazy loading. Paused Refresh kept score 75, and the checked time remained local with GMT+5:30. Physical-device and screen-reader speech checks remain open.
-- Cleanup changes are local; no commit, push, or deployment was performed for this pass.
-
-## Status ribbon and title label — 12 November 2026
-
-- Moved the score status from inside the gauge to the ribbon below it. The ribbon uses the gauge status colour and dark text. Added a small “Unofficial” label below the site title. Removed the old status styles and ribbon text.
-- Kept the loose-board motion and straight finish. Browser checks confirmed that Pause held the same ribbon transform across observations and Resume finished at zero rotation. The gauge accessible label retains the status without duplicate ribbon speech.
-- All 42 tests and type, lint, formatting, build, and live Worker checks passed. Browser review at 1280 × 720, 320 × 740, and 568 × 320 confirmed readable text, clear ribbon spacing, full-screen hero height, and no horizontal overflow. The live score 75 used the matching coral colour.
-- Reduced-motion behaviour remains covered by unit tests and CSS; the browser system preference was not changed. Physical-device and screen-reader speech checks remain open. Changes are local; no commit, push, or deployment was performed.
-
-## Score context, video scanning, sharing, and quiet motion — 12 November 2026
-
-- Moved the sample summary below the ribbon without repeating it in the second fold. Kept the formula in About. Added saved-reading, unavailable-feed, and local-preview notices near the score, with extra space when needed. Refresh keeps the previous reading and original timestamp on failure.
-- Added a small colour marker and text label for AI matches. Native details controls reveal keyword sources on demand. Unmatched videos retain a plain text label. Server rendering and browser refresh use the same card data. Thumbnails retain lazy loading.
-- Added Share reading beside Refresh. Native sharing includes the actual target score, short joke, sample summary, checked time with timezone, satire label, and clean site URL. Clipboard and selectable-text fallbacks cover unsupported or blocked APIs. Local previews disable sharing. Cancellation does not trigger copying. No score history was added.
-- Removed the critical marker pulses. The down arrow moves gently during the reveal and stops when the ribbon finishes straight. Pause, replay, visibility, and reduced-motion behaviour remain in place.
-- All 47 tests and type, lint, format, build, and live Worker checks passed. Sharing tests cover payloads, clean URLs, native sharing, cancellation, clipboard content, and blocked or missing APIs. Existing feed/cache tests cover retained readings on upstream failure.
-- Browser review covered 1280 × 720, 320 × 740, and 568 × 320. The hero retained full-screen height without horizontal overflow. Match details expanded correctly; Refresh retained score 75 and all 15 lazy-loaded cards. The final ribbon was fixed and the arrow animation was none. Screenshots are saved in /tmp/fireship-index-improved-hero.png and /tmp/fireship-index-improved-videos.png.
-- The device share request was invoked, but the browser automation could not complete or inspect the system share menu. Native delivery, real clipboard permissions, manual-copy focus on physical devices, screen-reader speech, and browser-level reduced motion remain unverified. The browser was reloaded after the native-share check. No commit, push, or deployment was performed.
-
-## Less first-screen text — 12 November 2026
-
-- Removed the hero subtitle and its unused responsive styles. Moved the sample summary back to the video section. Removed the summary prop from Gauge. The first screen keeps branding, headline, score, and ribbon; feed notices remain hidden unless needed. Sharing still reads the same summary element in its new location.
-- All 47 tests and type, lint, formatting, and build checks passed. Browser review at 1280 × 720, 568 × 320, and 320 × 740 confirmed clear ribbon spacing and a full-screen hero. The phone layout had no horizontal overflow, the summary was inside the video section, and the normal feed notice was hidden.
-- Updated the live HTML verifier to reject the old subtitle and require the summary after the video-section boundary. Physical-device and screen-reader speech checks remain open. No commit, push, or deployment was performed.
-
-## AI match tooltips — 13 November 2026
-
-- Replaced the expandable AI match panels with tooltip buttons. Shared presentation data supplies stable tooltip IDs for server rendering and browser refresh. Buttons use aria-describedby; explanations use role=tooltip. Tooltips appear on hover, focus, or click and close with Escape, focus exit, or an outside pointer action. Tooltip content remains hoverable and wraps within the card width without changing grid height.
-- All 47 tests and type, lint, formatting, and build checks passed. The live HTML verifier now checks tooltip markup and rejects the old match details element.
-- Browser checks confirmed click opening, Escape dismissal, and reopening through keyboard focus. At 320 pixels wide, the tooltip stayed between x=20 and x=300 without horizontal overflow. After Refresh, all 12 tooltip controls and all 15 lazy-loaded thumbnails remained intact; the new NVIDIA video showed its title and description match.
-- Pointer-hover rules were inspected in CSS; physical touch, screen-reader speech, and real-device hover behaviour remain unverified. Changes remain local. No commit, push, or deployment was performed.
-
-## Tooltip below the match label — 13 November 2026
-
-- Positioned match tooltips below the 44-pixel trigger so they do not cover the current video image, title, or date. Kept the existing CSS and TypeScript implementation without an external tooltip library.
-- All 47 tests and type, lint, formatting, and build checks passed. Browser checks at the normal desktop size and 320 × 740 confirmed the tooltip top equals the trigger bottom. The phone layout had no horizontal overflow. Physical-device checks remain open. No commit, push, or deployment was performed.
-
-## Compact video metadata — 13 November 2026
-
-- Put the upload date and match label in one shared metadata row in server HTML and refreshed cards. Kept the match button target at 44 pixels high and the tooltip below it. Tooltip width stays within the remaining card space.
-- All 47 tests and type, lint, formatting, and build checks passed. Desktop and 320-pixel browser checks confirmed equal date and label vertical centres, readable tooltips, and no horizontal overflow. After Refresh, all 15 metadata rows remained aligned and all thumbnails retained lazy loading. Physical-device checks remain open. Changes remain local; no commit, push, or deployment was performed.
-
-## Metadata space-between alignment — 13 November 2026
-
-- Aligned upload dates to the left and match labels to the right. Kept tooltips below the label and aligned their right edge within the card.
-- All 47 tests and type, lint, formatting, and build checks passed. Desktop and 320-pixel browser checks confirmed the label right edge matched the row right edge. The phone had no horizontal overflow. Changes remain local; no commit, push, or deployment was performed.
-
-## Tighter video bottom padding — 13 November 2026
-
-- Reduced video-card bottom padding from 22 to 10 pixels. All 47 tests and type, lint, formatting, and build checks passed. The browser confirmed 10-pixel computed padding and working tooltip dismissal. The feed used a labelled saved reading during this check. No commit, push, or deployment was performed.
-
-## Clearer last-reading notice — 13 November 2026
-
-- Removed the Saved reading label from the hero in server HTML and client updates. A failed feed refresh now says “Couldn’t refresh. Showing the last available reading.” beside the checked time. Age-only cache notices ask users to refresh without claiming a failed request. Local previews and a feed with no available reading retain their hero notices.
-- All 47 tests and type, lint, formatting, and build checks passed. Browser review used an actual stale feed response: the gauge notice was empty and hidden, while the checked-time line showed the approved explanation and original timestamp. No commit, push, or deployment was performed.
-
-## AI future headline — 13 November 2026
-
-- Added the approved headline “AI has a future. Are we in it?” and subtitle “An unofficial doom index from Fireship’s latest 15 uploads.” Kept the question italic and coloured to match the gauge. Updated sharing text, social image alt text, and SVG/PNG social artwork. No project dependency was added.
-- All 47 tests and type, lint, formatting, and build checks passed. Browser review at 1280 × 720, 320 × 740, and 568 × 320 confirmed readable copy without horizontal overflow and a full-screen first section. The social PNG was rendered and visually checked. Physical-device and screen-reader speech checks remain open. No commit, push, or deployment was performed.
-
-## Imagegen editorial layout and Google Fonts — 13 November 2026
-
-- Implemented the approved imagegen direction: branding across the top, editorial copy on the left, and the simple gauge on the right on desktop. Added HeroCopy as a separate component. Narrow portrait screens stack the content; short landscape uses two columns. Kept a full dynamic-viewport first section.
-- Added Newsreader regular and real italic for the headline, and Public Sans for interface text through Google Fonts with preconnect and display=swap. The gauge keeps locally hosted Barlow Condensed. Browser font checks reported both Google Fonts loaded. System fallbacks keep text available when the font service is unavailable; cross-site font caching is not assumed.
-- Replaced the subtitle with “Tracking AI coverage in Fireship’s latest 15 uploads.” Added Recent uploads below the centred down arrow. Kept the single gauge marker, score animation, status colours, straight ribbon finish, pause/replay, and quiet settled state. Updated the social SVG/PNG with the same copy and fonts. No project dependency was added.
-- All 47 tests and type, lint, formatting, and build checks passed. Live HTML checks now verify the Google Fonts links, separate copy component, source explanation, and scroll label.
-- Browser review covered 1280 × 720, 768 × 1024, 320 × 740, and 568 × 320 without horizontal overflow. The hero height matched the viewport. Pause held an intermediate score; Resume completed at 77 with a fixed ribbon and no arrow animation. The phone video section retained 12 tooltips and 15 lazy-loaded thumbnails. The social artwork was rendered and visually checked.
-- The feed used its last available reading with the explanatory notice beside the checked time. Physical devices, screen-reader speech, font-service outage emulation, and browser-level reduced motion remain unverified. Reduced motion remains covered by the existing unit tests and CSS. No commit, push, or deployment was performed.
-
-## Direct purpose copy and Fraunces — 13 November 2026
-
-- Applied both approved changes: Fraunces Medium with real italic from Google Fonts, and the headline “How much AI is Fireship posting?” The supporting line explains “An unofficial index of AI coverage and posting pace across his latest 15 uploads.” Public Sans remains the body font and Barlow Condensed remains the gauge font. The gauge and ribbon carry the humour.
-- Used restrained Fraunces softness with its alternate letterforms. Updated sharing text, image alt text, and social SVG/PNG. Adjusted responsive headline sizes to keep the question readable on narrow screens.
-- All 47 tests and type, lint, formatting, and build checks passed. Browser review at 1280 × 720, 320 × 740, and 568 × 320 confirmed loaded regular and italic fonts, full-screen hero height, and no horizontal overflow. The social artwork was rendered and visually checked. Physical-device checks remain open. No commit, push, or deployment was performed.
-
-## Quiet arrow, open About, and server-only RSS — 13 November 2026
-
-- Removed the visible Recent uploads caption and its unused styles. The arrow remains a 48 × 48 control with the accessible name Scroll to recent videos. Its reveal motion and settled pause behaviour remain in place.
-- Replaced the About accordion with an open section: The signal, The score, and The joke. Kept the source, cache fallback, scoring period, and independence notice. Removed the long repeated explanations and manual file importer. Desktop uses three short columns; phones stack them.
-- Removed browser file-input handling, local-preview state, and the browser XML-parser import. RSS parsing stays on the server, which already stores the last valid feed. Removed obsolete import suggestions from error messages. Server XML validation and its tests remain intact.
-- All 47 tests and type, lint, formatting, build, and live Worker checks passed. Browser review at 1280 × 720 and 320 × 740 confirmed open About content, no importer, no visible arrow caption, and no horizontal overflow. Refresh completed with 15 cards and the original check time while showing the saved feed notice.
-- Generated and corrected an imagegen concept for the below-fold video design. This remains a preview, not the implemented grid. Its sample rows illustrate the design; production continues to show the actual 15-upload feed. Physical-device and screen-reader speech checks remain open. No commit, push, or deployment was performed.
-
-## Fewer dividers — 13 November 2026
-
-- Removed divider rules below the video heading, below video items, and above the footer. Kept only the divider before About the index. Existing spacing, compact metadata, and tooltips remain unchanged.
-- All 47 tests and type, lint, formatting, and build checks passed. Browser inspection confirmed zero-width heading, card, and footer borders and the one-pixel About top border. The 320-pixel layout had no horizontal overflow. Changes remain local; no commit, push, or deployment was performed.
-
-## Video title spacing — 13 November 2026
-
-- Reserved a minimum of three title lines in multi-column layouts without clipping text. Reduced video row gaps to 24 pixels. Phone titles keep their natural height.
-- All 47 tests and type, lint, formatting, and build checks passed. Browser measurements at 1280, 768, and 581 pixels wide confirmed aligned metadata within each row for the current feed. At 320 pixels, title minimum height remained auto, full text stayed visible, and there was no horizontal overflow.
-- The review showed visible empty space under short titles with a fixed three-line minimum. Natural title heights with metadata aligned to each row’s bottom were recommended as a possible follow-up; that further change was not made. No commit, push, or deployment was performed.
-
-## Natural video titles with aligned metadata — 13 November 2026
-
-- Replaced the fixed three-line title minimum with natural title heights. Multi-column cards use a column layout with metadata pushed to the row bottom. Full titles remain visible; phones keep their existing natural layout.
-- All 47 tests and type, lint, formatting, and build checks passed. At 1280 pixels, browser measurements showed one- and two-line title heights while metadata bottoms matched within each row. At 320 pixels, cards remained list items, title minimum height was auto, and no horizontal overflow occurred.
-- Discussed a possible AI spotted thumbnail sticker. No overlay was implemented. No commit, push, or deployment was performed.
-
-## RSS recovery and diagnostics — 13 November 2026
-
-- Confirmed the original Fireship channel page still advertises the configured RSS URL. Direct requests from this machine returned HTTP 404 with the current, identified-client, and browser-style headers. A header change did not resolve it. The feed subsequently recovered during verification.
-- Added structured failure logging before the saved-feed return. Logs include source URL, upstream HTTP status, attempt count, failure reason, fallback use, and original successful fetch time. No response body is logged.
-- Added one retry for transient HTTP 404, 408, and server errors. Both attempts share the existing eight-second timeout. Retry-After responses and HTTP 429 are not immediately retried. Invalid data and timeouts preserve the last good feed and its original timestamp.
-- All 53 tests and type, lint, formatting, build, and live Worker checks passed. New tests cover 404 recovery, persistent failure diagnostics, rate limits, Retry-After, invalid XML, timeout logs, and unchanged fallback timestamps.
-- The live API eventually returned stale=false and a newer fetchedAt timestamp. Rendered HTML showed the current checked time without the refresh-failure message. The in-app browser was unavailable, so interactive Refresh and a new browser screenshot were not verified in this pass. No UI layout was changed.
-- These changes improve retries and diagnostics; they do not establish a permanent fix for YouTube’s intermittent upstream failures. No commit, push, or deployment was performed.
-
-## Restore pnpm — 13 November 2026
-
-- Pinned pnpm 12.18.0. Restored the original dependency lockfile and added the package manager record required by this version. Dependency versions are unchanged. Removed the npm lockfile and changed active commands to pnpm.
-- Added explicit build permissions for esbuild, sharp, and workerd. Replaced the dependency folder with a clean frozen-lockfile install.
-- Reduced the README to short setup, check, deployment, and scoring instructions in Simplified Technical English. Use `pnpm run deploy` to run the project deployment script.
-- All 53 tests and type, lint, formatting, build, and live Worker checks passed with pnpm. Runtime checks covered 15 feed entries with descriptions, server HTML, API and HTML cache hits, and the 404 page. No visual changes were made. No new browser or physical-device checks were run.
-- Changes remain local. No commit, push, or deployment was performed.
-
-## Astro production URL — 13 November 2026
-
-- Set the published origin in Astro’s `site` config. Metadata now uses `import.meta.env.SITE`. Removed the custom `SITE_URL` variable from code and README deployment steps.
-- Added build checks for the sitemap and robots sitemap link. Added runtime checks for canonical, Open Graph, and social image URLs and a successful sitemap response.
-- All 53 tests and type, lint, formatting, build, and local Worker checks passed without a custom URL variable. The generated sitemap and rendered metadata use the production origin. No visual changes or new device checks were made.
-- Changes remain local. No commit, push, or deployment was performed.
-
-## Workers hostname and analytics — 13 November 2026
-
-- Changed Astro’s production origin to `https://fireship-index.sasivarnan.workers.dev`. Canonical links, social metadata, robots, and sitemap use this config.
-- Added the supplied Cloudflare Web Analytics module script and token before the closing body tag. Astro keeps the external script unchanged.
-- All 53 tests and type, lint, formatting, build, and local Worker checks passed. Runtime checks confirmed the new metadata URLs, sitemap, and one analytics script with the supplied token. Analytics collection in the Cloudflare dashboard was not checked.
-- Changes remain local. No commit, push, or deployment was performed.
-
-## Flame and gauge favicon — 13 November 2026
-
-- Replaced the fi text icon with the existing Fireship flame above a simple index gauge. Used the site’s dark background, cream dial, and orange needle. Updated the asset credit.
-- Inspected raster previews at 256 and 32 pixels. All 53 tests and type, lint, formatting, and build checks passed. No browser tab or physical-device checks were run.
-- Changes remain local. No commit, push, or deployment was performed.
-
-## Integrated flame dial — 13 November 2026
-
-- Replaced the stacked flame and speedometer with one open dial around the original flame. Tilted the flame toward the high end, added three broad ticks, and removed the separate needle and centre dot.
-- Compared three angles at 256, 32, and 16 pixels. Selected the middle angle for clear spacing at small sizes. All 53 tests and type, lint, formatting, and build checks passed. No browser tab or physical-device checks were run.
-- Changes remain local. No commit, push, or deployment was performed.
-
-## Vercel migration — 17 November 2026
-
-- Replaced the Cloudflare adapter with `@astrojs/vercel` 11.0.22, which supports Astro 7. Astro remains at 7.4.11. Selected Node 24.x for Vercel and used local Node 24.14.0 with pnpm 12.18.0 for checks. Removed Wrangler, its configuration, the Worker types, middleware response caching, and the workerd build permission. Kept the Cloudflare analytics script and token.
-- The first baseline attempt used Node 22.21.0, which Astro rejects. With Node 24, all 53 original tests, type, lint, and format checks passed. The old Cloudflare build then failed because its local registry tried to write outside the permitted workspace. No external permission or hosting change was made to resolve that old build.
-- Configured 900-second ISR for `/` and excluded `/api/feed`. Build checks inspect the generated Vercel route table, ISR configuration, Node runtime, function handlers, discovery files, and static assets. The page remains server-rendered. Removed the retired response-cache header from Refresh and runtime checks. The score, limits, design, assets, and footer are unchanged.
-- Prepared Upstash Redis as the local implementation default after presenting the storage options. No database, integration, account, credentials, or paid resource was created. Both routes use the same server-only REST store. `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` must be configured before release. There is no snapshot expiry. Each store operation has a 1.5-second timeout; the RSS attempts still share eight seconds. Missing or failed storage is logged, with the existing best-effort upstream behavior retained. The old KV snapshot is not copied automatically.
-- The production origin remains `https://fireship-index.sasivarnan.workers.dev` until a replacement is confirmed. Set the replacement once in Astro's `site` config before release. The portfolio and repository website field were not changed. Keep the current Cloudflare deployment and KV snapshot for rollback.
-- `pnpm check` passed with 60 unit tests, type, lint, format, build verification, and built-function checks. The built checks use local RSS fixtures and a simulated REST store. They cover a shared fresh snapshot, no additional upstream read during the freshness window, old-snapshot recovery with the original timestamp, page and API HTTP 503 without saved data, retry guidance, and best-effort behavior when storage fails. Unit tests also cover invalid XML, missing descriptions, oversized RSS, timeouts, retries, rate limits, invalid stored data, storage failures, and write confirmation.
-- The generated build has a 900-second `_isr` configuration, a `/` rewrite to that function, and an `/api/feed` rewrite to the uncached render function. The valid page does not set `Cache-Control: no-store`; the API does. The tests exercise the generated ISR rewrite and function, but do not simulate Vercel's cache.
-- Added a localhost-only build helper for `pnpm preview`, since this adapter does not provide `astro preview`. It loads the generated Vercel render function and static assets. It does not simulate ISR. The default port is 5174; `PORT` can select another port. The local server used 5175 because 5174 was already in use. That existing service was left running.
-- `BASE_URL=http://127.0.0.1:5175 pnpm test:runtime` passed against the built output with real YouTube RSS: 15 entries with descriptions, server HTML, evidence, lazy thumbnails, API fields and headers, canonical and social metadata, analytics markup, 1200 × 630 social image, favicon, sitemap, robots, and 404. No real Redis credentials were available, so this pass used the documented best-effort upstream path without persistent storage. Score comparison is conditional on matching page/API fetch timestamps.
-- In-app browser checks on the built output confirmed Refresh updates the cards and local checked time, Pause changes to Resume, Replay clears Pause, and an AI-match control exposes its description tooltip. The desktop viewport was 1063 × 987. Mobile checks at 375 × 812 and 320 × 740 showed no horizontal overflow. The video grid and thumbnail display were inspected. The temporary viewport override was reset.
-- Share entered the browser's native sharing flow, but completion was not verified and no share was sent. Reload restored the page. Native sharing, cancellation, clipboard fallback, and manual fallback remain covered by unit tests. Reduced-motion behavior was checked by the existing unit test, not by a new browser preference test. No physical-device checks were run.
-- Release checks still required: connect the real durable store; verify its snapshot across function instances; confirm the replacement production origin; and test initial ISR generation, a cache hit, expiration, and controlled feed failures on an authorized Vercel preview. A stale HTTP 200 page can be cached for the normal 15-minute interval; the old one-minute HTML retry policy is not retained. Refresh can attempt recovery through the uncached API. Analytics markup was verified; actual analytics collection was not.
-- No commit, push, deployment, DNS change, or Cloudflare resource deletion was performed. The original migration handoff file was preserved.
-
-## Private Vercel Blob storage — 17 November 2026
-
-- Replaced the provisional Upstash implementation after the user selected storage that needs only a Vercel account. The shared page/API store now uses `@vercel/blob` 2.9.0. Removed the Redis adapter, Redis tests, and Upstash environment variables. Updated the project instructions, README, and `.env.example`. This entry supersedes the Upstash setup and release steps in the earlier migration record.
-- Setup requires a private Vercel Blob store connected to the project and the server-only `BLOB_READ_WRITE_TOKEN`. The shared file is `feed-snapshots/fireship:feed:v3.json`. Successful fetches replace that file without a random suffix or expiry. Reads use `useCache: false` to get the latest private file instead of a cached copy. The existing feed validation and original successful timestamp remain unchanged.
-- Each storage operation has a 1.5-second deadline that aborts its request. The deadline covers SDK work and snapshot body parsing. RSS requests still share the existing eight-second timeout. Missing files return no snapshot. Failed reads, invalid JSON, denied writes, and unexpected write paths remain errors for the existing best-effort feed service.
-- All 60 unit tests, type, lint, format, build, and built-function checks passed with Node 24.14.0 and pnpm 12.18.0. Storage tests use the real Blob SDK with Undici's mock dispatcher and block external connections. They cover private access, cache bypass, repeated writes to the same file, missing credentials, missing files, invalid JSON, read/write errors, wrong file paths, and deadlines. The initial test attempt used global fetch mocks; these were replaced because the SDK imports its own Undici fetch client.
-- Built-function tests use controlled Blob responses and RSS fixtures. They confirm the page and API share one fresh snapshot, preserve the original timestamp during an upstream outage, return HTTP 503 when no saved reading is available, and serve a valid upstream reading when storage is unavailable. Build verification still confirms the 900-second ISR interval and API exclusion.
-- `BASE_URL=http://127.0.0.1:5176 pnpm test:runtime` passed against the new build with 15 real YouTube RSS entries. No real storage credential was available, so this runtime pass used best-effort upstream fetches without durable storage. Metadata, analytics markup, assets, API output, and the 404 response passed. No interface changes were made, so the earlier browser checks were not repeated. No physical-device checks were run.
-- A real Blob store connection, durable reads across Vercel instances, and Vercel ISR behavior remain unverified. The production origin is unchanged. No store, account, paid resource, commit, push, deployment, or DNS change was created or performed.
-
-## Local Blob secret loading — 17 November 2026
-
-- Fixed the page/API store to read `BLOB_READ_WRITE_TOKEN` with `getSecret` from `astro:env/server`. The previous `process.env` read did not use Astro's development `.env` loader. This caused the generic snapshot read/write warnings even when local credentials were valid. The new reader uses local `.env` values in development and server environment values in production.
-- Confirmed the local token was present and a direct authenticated read of the private snapshot succeeded. No token value or snapshot body was printed. Started an isolated development server on port 5177 without changing the user's running server. Both page and API returned HTTP 200 and matched the stored snapshot's videos and original fetch time. No storage warning occurred in that test server.
-- The production runtime checker is intended for built HTML. Running it against development HTML failed because Astro adds development attributes to the score span. Used direct page/API assertions for the development check. After building, the full runtime checker passed on port 5178 with 15 real RSS entries and the configured private store. Existing storage was read; a separate real write was not forced.
-- All 60 tests, type, lint, format, build, and controlled built-function checks passed. Checked generated Vercel files for the exact local token without printing it. The token was absent from the build output. No browser or device checks were repeated because this change affects server secret loading only. Vercel-hosted ISR remains unverified.
-- Updated the README to require a local-server restart after changing the token. No credentials, user settings, existing snapshot, production URL, commit, push, or deployment were changed.
-
-## Allo body font and font cleanup — 17 November 2026
-
-- Reviewed active platform settings, dependencies, server feed access, font imports, assets, and checks before the font change. No broad refactor was needed. Kept existing local migration work, the user's Node version change, credentials, and the original handoff document. Historical audit entries and old build-directory ignore rules were retained.
-- Replaced Public Sans with locally served Allo for body text, video titles, controls, and dates. Used the unmodified `AlloVariableFriendly.woff2` from upstream commit `4bef023e21d938ab2b6982d3dda5fa334e1e5a9b`. It has fixed roundness 50 and variable weight and optical size. Added the full SIL Open Font License and copyright notices at `/allo-license.txt`, with source credit in the brand-assets record.
-- Removed Public Sans from the Google Fonts request. Kept Fraunces for the hero and About heading, and Barlow Condensed for the score and section headings. Moved local font-face declarations into one stylesheet and removed Barlow's unused WOFF fallback from the build. The output has two local WOFF2 files, with Allo and Barlow preloaded. No dependency was added.
-- Allo's font file is 229,028 bytes, about 224 KiB. The smaller upstream Friendly variant avoids the full roundness axis. No claim of a download-speed gain is made. The file is versioned locally and uses `font-display: swap`.
-- `pnpm check` passed with all 60 tests, type, lint, format, build verification, and controlled built-function checks. Updated the existing runtime check to require the local Allo preload, a successful font response with WOFF2 magic bytes, a successful licence response, and no Public Sans request. The full runtime check passed on the built output at port 5180 with 15 real RSS entries and the configured Blob store.
-- Inspected the built page in the in-app browser at 1280 × 720, 375 × 812, and 320 × 740. No horizontal overflow or title overflow occurred. Desktop card bottoms remained aligned within each row, with natural one- and two-line titles. Inspected hero, long titles, metadata, controls, and the narrow-screen tooltip. Refresh updated the cards and kept the local checked time; AI match exposed its evidence. Computed font families showed Allo on body text, cards, and Refresh, Fraunces on the hero, and Barlow Condensed on the score. Browser error/warning logs were empty. Reset the temporary viewport override after the checks.
-- One local preview request logged a Blob read warning. The page and API continued to return valid data, and the full runtime check passed. The warning did not include a cause, so it is not attributed to the font change.
-- No physical-device or new reduced-motion browser checks were run. Existing reduced-motion unit coverage passed. No commit, push, deployment, production URL change, or hosting resource change was performed.
+Updated 17 November 2026. This file records the current implementation and known limits.
+Use the [README](../README.md) for setup and build commands.
+
+## Current implementation
+
+- One public Astro page on Vercel. The page renders the score and up to 15 videos on the server. The original YouTube RSS feed is parsed on the server.
+- The score uses titles and descriptions, with 60% AI coverage and 40% capped weekly posting pace. Keyword checks can misclassify videos. The index is unofficial satire.
+- The home page uses 900-second ISR. The feed API is excluded from ISR and returns `Cache-Control: no-store`. Both routes share the last valid snapshot in private Vercel Blob storage. A fresh snapshot is reused for 15 minutes. Refresh does not bypass this window.
+- Failed upstream reads can use a valid saved snapshot with its original timestamp. A saved-reading page can be cached for another 15 minutes. No valid snapshot plus upstream failure returns HTTP 503. Storage errors are logged; writes remain best effort.
+- The confirmed production origin is set once in Astro's `site`. Canonical, social metadata, robots, and sitemap use `import.meta.env.SITE`. Local settings use `getSecret` from `astro:env/server` for the Blob token. The token was absent from generated Vercel files in the local secret-loading check.
+- Allo is served locally for body text and controls. Barlow Condensed remains on the score and section headings; Fraunces remains on the hero and About heading. Font and logo credits are in [brand assets](brand-assets.md). Allo adds a 229,028-byte WOFF2 file. Public Sans and Barlow's unused WOFF fallback are removed.
+
+## Completed checks
+
+- Node 24.14.0 and pnpm 12.18.0: all 60 unit tests, Astro type checks, lint, format, production build, and controlled built-function checks passed before this content update. The latest content checks are recorded below.
+- Build checks inspect the generated Vercel functions, Node runtime, 900-second ISR config, API exclusion, assets, robots, and sitemap.
+- Feed and Blob tests cover freshness, saved fallback, invalid XML and snapshots, missing descriptions, oversized feeds, retries, rate limits, deadlines, denied storage access, file replacement, and missing credentials. Mock HTTP dispatchers block external connections during Blob tests.
+- Built-function checks use controlled Blob and RSS responses. They cover a shared fresh snapshot, saved data during outages, HTTP 503 without a snapshot, and valid upstream data when storage fails. These checks do not simulate Vercel's ISR cache.
+- Local development page and API reads matched the real private Blob snapshot's videos and original timestamp. The built runtime check passed with 15 real RSS entries, server HTML, evidence, lazy images, API output, metadata, assets, robots, sitemap, and 404. A separate real Blob write was not forced.
+- The Allo browser review passed at 1280 × 720, 375 × 812, and 320 × 740. No horizontal or title overflow occurred. Desktop cards stayed aligned within each row. Refresh, local checked times, and match tooltips worked. Temporary viewport settings were reset.
+- During the origin check, read-only requests to the deployed Vercel page and API returned HTTP 200. The page reported a cache HIT; the API reported MISS and `no-store`. The deployed metadata still used the old origin at that check. This result does not verify later deployment state.
+
+## Open limits
+
+- Verify the pending origin and content updates after an authorized commit, push, and deployment. Confirm search indexing separately; it is not guaranteed.
+- Vercel ISR expiration, regeneration, and controlled outage behavior remain unverified on the hosting service. A cache HIT alone does not prove these paths.
+- Confirm durable storage across Vercel function instances. One local preview request logged a storage read warning without a cause; the page/API and full runtime check still succeeded.
+- Cloudflare analytics markup is present. Actual analytics collection has not been confirmed.
+- Physical-device behavior and screen-reader speech remain unverified. Reduced motion is covered by unit tests and CSS, but a new browser preference check has not been run. Native sharing completion was not verified; sharing and fallback paths have unit coverage.
+- Keep the previous Cloudflare deployment and snapshot until the Vercel release is accepted. No resource deletion or DNS change is authorized by this record.
+
+## SEO, answer-system text, and documentation cleanup — 17 November 2026
+
+- Set the page and social title to `The Fireship Index | Unofficial AI Coverage Score`. The shared description now states the sample limit, title/description evidence, AI coverage, posting pace, and unofficial satire. Kept the WebSite structured-data name as the project name and used the same description in metadata and structured data. No score or prediction was added to static metadata.
+- Rewrote `/llms.txt` to describe server RSS parsing, Vercel ISR, the uncached feed API, private Blob storage, original fetch timestamps, saved-data behavior, and real HTTP 503 responses. Kept the score formula and latest-15 selection rules. Removed the retired Cloudflare/KV caching claims. The file is a static project overview, not a live reading or a guarantee of answer-system inclusion.
+- Replaced the visible fixed-cache phrase with a short explanation of request-driven updates, Refresh, and saved timestamps. The score formula, page structure, and current source links are unchanged.
+- Removed the obsolete migration handoff and older audit entries. Git history retains the earlier records. The active audit contains the current implementation, completed checks, and open limits. Removed links to the discarded archive copies.
+- All 60 unit tests, type, lint, format, production build, and controlled built-function checks passed. Build verification checks the generated discovery file for Vercel/Blob storage and the 900-second interval. Runtime checks confirm the page/social titles, matching descriptions, WebSite JSON-LD, visible update explanation, and canonical/social/discovery URLs. The full runtime check passed on port 5182 with 15 real RSS entries.
+- Inspected the built About section in the in-app browser at 1280 × 720 and 320 × 740. The longer update text wrapped without horizontal overflow. The browser tab displayed the new title. Reset the viewport override. No physical-device, screen-reader, or new reduced-motion preference checks were run.
+- The production-origin change remains local alongside this content update. No commit, push, deployment, DNS change, or external portfolio/repository-profile update was performed.

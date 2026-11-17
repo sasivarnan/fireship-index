@@ -17,6 +17,33 @@ assert.equal(page.status, 200);
 const html = await page.text();
 assert.match(html, /<h1[\s>]/);
 assert.match(html, /The Fireship Index/);
+const title = "The Fireship Index | Unofficial AI Coverage Score";
+assert.ok(html.includes(`<title>${title}</title>`));
+assert.ok(html.includes(`<meta property="og:title" content="${title}"`));
+assert.ok(html.includes(`<meta name="twitter:title" content="${title}"`));
+const description = html.match(
+  /<meta name="description" content="([^"]+)"/,
+)?.[1];
+assert.ok(description?.includes("up to 15 recent Fireship YouTube uploads"));
+assert.ok(
+  html.includes(`<meta property="og:description" content="${description}"`),
+);
+assert.ok(
+  html.includes(`<meta name="twitter:description" content="${description}"`),
+);
+const structured = JSON.parse(
+  html.match(
+    /<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/,
+  )?.[1] ?? "null",
+);
+assert.equal(structured?.name, "The Fireship Index");
+assert.equal(structured?.description, description);
+assert.equal(structured?.url, `${origin}/`);
+assert.match(
+  html,
+  /Updates are checked on request after 15 minutes, not on a fixed schedule/,
+);
+assert.match(html, /Saved readings keep their original check time/);
 const analyticsScripts = (html.match(/<script\b[^>]*>/g) || []).filter((tag) =>
   tag.includes('src="https://static.cloudflareinsights.com/beacon.min.js"'),
 );

@@ -1,16 +1,27 @@
 # The Fireship Index
 
-An independent, satirical score of AI coverage in Fireship's recent YouTube uploads. Built by Sasivarnan R (https://sasivarnan.com). Not affiliated with Fireship.
+An independent, satirical score of AI coverage and posting pace in Fireship's latest YouTube uploads. Built by Sasivarnan R (https://sasivarnan.com). Not affiliated with Fireship.
 
 ## Data
-Cloudflare fetches the original Atom RSS feed from YouTube. Both video titles and descriptions are used. Sponsor calls to action, course links, and repeated description paragraphs are excluded where possible. Rules can misclassify videos.
 
-The home page includes the calculated score and video list in its server-rendered HTML. /api/feed returns the saved feed and index as JSON. Responses refresh on request after 15 minutes, with old results served while regeneration runs. The last successful feed is saved in KV for outages. Cache contents can vary by Cloudflare location.
+The Astro server fetches the original Atom RSS feed from YouTube and parses it on the server. Both video titles and descriptions are used. Sponsor calls to action, course links, and repeated description paragraphs are excluded where possible. Keyword rules can miss context and misclassify videos.
+
+The home page includes the calculated score and video list in its server-rendered HTML. Each AI match identifies terms found in the title or description. The displayed check time is the time of the last successful feed fetch, not the time the page was opened.
+
+## Updates and saved readings
+
+Vercel ISR caches the home page for 900 seconds (15 minutes). After expiration, a request can receive the previous page while regeneration runs. Updates are request-driven, not scheduled. A regenerated page that uses an old saved reading can be cached for another 15 minutes.
+
+/api/feed is excluded from ISR and returns Cache-Control: no-store. Refresh calls this API. The page and API share the last valid feed snapshot in a private Vercel Blob file. A snapshot less than 15 minutes old is reused without fetching YouTube again. Refresh does not bypass that freshness window.
+
+If YouTube fails, a valid saved reading is returned with stale: true and its original fetchedAt timestamp. If no valid saved reading is available and YouTube fails, the page and API return HTTP 503, not a zero score. Storage failures are logged; a valid upstream feed can still be shown, but a failed write does not preserve it for later requests.
 
 ## Score
+
 The latest 15 available uploads count, regardless of age. They are sorted newest first and deduplicated. A shorter feed uses its available count. Coverage days = max(1, days from the oldest included upload through the calculation time). AI share = matched uploads / included uploads. Weekly rate = matched uploads / coverage days × 7. Score = round(100 × (0.6 × AI share + 0.4 × min(weekly rate / 3, 1))). No included uploads means no score.
 
-The score is satire, not a prediction, probability, or measure of AI capability, job losses, or human extinction. The RSS feed is only a recent sample. Check the displayed fetch time before describing the score as current.
+The score is satire, not a prediction, probability, or measure of AI capability, job losses, or human extinction. The RSS feed is only a recent sample. Check the displayed fetch time and any saved-reading notice before describing the score as current. Do not report a score from an old page or this static overview as a live reading.
 
 ## Original source
+
 https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA
