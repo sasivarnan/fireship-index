@@ -65,7 +65,18 @@ assert.match(html, /class="gauge-caption"/);
 assert.match(html, /How much AI is/);
 assert.match(html, /fonts.googleapis.com/);
 assert.match(html, /family=Fraunces/);
-assert.match(html, /Public\+Sans/);
+assert.doesNotMatch(html, /Public\+Sans|Public Sans/);
+const bodyFontPath = html.match(
+  /href="([^"]*AlloVariableFriendly[^"]*\.woff2)"/,
+)?.[1];
+assert.ok(bodyFontPath, "Allo must be preloaded from a local asset");
+const bodyFont = await fetch(new URL(bodyFontPath, base));
+assert.equal(bodyFont.status, 200);
+assert.equal(
+  Buffer.from(await bodyFont.arrayBuffer()).toString("ascii", 0, 4),
+  "wOF2",
+);
+assert.equal((await fetch(`${base}/allo-license.txt`)).status, 200);
 assert.match(html, /class="hero-copy"/);
 assert.doesNotMatch(html, /class="scroll-label"|id="feed-file"|import XML/);
 assert.match(html, /<section id="method"/);
@@ -95,15 +106,19 @@ assert.equal(png.readUInt32BE(16), 1200);
 assert.equal(png.readUInt32BE(20), 630);
 assert.match(html, /Built by/);
 assert.doesNotMatch(html, /proxy\.cors\.dev|rss2json/);
-const cachedPage = await fetch(base);
-assert.ok(["HIT", "STALE"].includes(cachedPage.headers.get("X-Index-Cache")));
-const cachedApi = await fetch(`${base}/api/feed`);
-assert.ok(["HIT", "STALE"].includes(cachedApi.headers.get("X-Index-Cache")));
+assert.equal(api.headers.get("Cache-Control"), "no-store");
+assert.equal(api.headers.get("X-Feed-Fetched-At"), String(data.fetchedAt));
+assert.equal(api.headers.get("X-Feed-Stale"), data.stale ? "1" : "0");
+assert.equal(typeof data.stale, "boolean");
+assert.ok(Number.isFinite(data.fetchedAt));
+const favicon = await fetch(`${base}/favicon.svg`);
+assert.equal(favicon.status, 200);
+assert.match(await favicon.text(), /<svg/);
 assert.equal((await fetch(`${base}/missing-page`)).status, 404);
 assert.match(
   await (await fetch(`${base}/robots.txt`)).text(),
   /Disallow: \/api\//,
 );
 console.log(
-  `Runtime verified: ${data.videos.length} RSS entries with descriptions, score ${data.index.score}, raw server HTML, cached HTML/API hits, and 404.`,
+  `Runtime verified: ${data.videos.length} RSS entries with descriptions, score ${data.index.score}, raw server HTML, uncached feed API, metadata, assets, and 404.`,
 );

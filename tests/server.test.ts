@@ -1,13 +1,8 @@
-import { REVALIDATE_SECONDS } from "../src/lib/settings.ts";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { parseXml } from "../src/lib/xml.ts";
 import { getFeed, type SnapshotStore } from "../src/lib/feed-service.ts";
-import {
-  cachedResponse,
-  type ResponseStore,
-} from "../src/lib/response-cache.ts";
 
 const now = Date.parse("2026-11-06T12:00:00Z");
 const xml = await readFile(
@@ -23,15 +18,6 @@ class MemorySnapshot implements SnapshotStore {
   }
   async put(_key: string, value: string) {
     this.value = JSON.parse(value);
-  }
-}
-class MemoryResponses implements ResponseStore {
-  response: Response | undefined;
-  async match() {
-    return this.response?.clone();
-  }
-  async put(_key: Request, response: Response) {
-    this.response = new Response(await response.text(), response);
   }
 }
 
@@ -52,7 +38,7 @@ test("XML rejects wrong channels, invalid XML and entity declarations", () => {
     parseXml('<!DOCTYPE feed [<!ENTITY ai "AI">]>' + xml, now),
   );
 });
-test("fresh KV snapshot does not fetch YouTube", async () => {
+test("fresh saved snapshot does not fetch YouTube", async () => {
   const store = new MemorySnapshot();
   store.value = { videos, fetchedAt: now - 1000 };
   const snapshot = await getFeed(
@@ -96,69 +82,7 @@ test("cold upstream failure returns an error instead of invented data", async ()
   );
 });
 
-test("response cache serves fresh HTML without rendering again", async () => {
-  const cache = new MemoryResponses();
-  cache.response = new Response("<h1>Current</h1>", {
-    headers: {
-      "X-Generated-At": String(now - 1000),
-      "X-Feed-Fetched-At": String(now - 1000),
-    },
-  });
-  const result = await cachedResponse({
-    cache,
-    key: new Request("https://index.test/"),
-    generate: async () => {
-      throw new Error("Should not render");
-    },
-    waitUntil: () => assert.fail("Should not regenerate"),
-    now,
-  });
-  assert.equal(result.headers.get("X-Index-Cache"), "HIT");
-  assert.equal(await result.text(), "<h1>Current</h1>");
-});
-test("stale HTML is served while regeneration replaces the cache", async () => {
-  const cache = new MemoryResponses();
-  cache.response = new Response("Old reading", {
-    headers: {
-      "X-Generated-At": String(now - (REVALIDATE_SECONDS + 1) * 1000),
-    },
-  });
-  const work: Promise<unknown>[] = [];
-  const result = await cachedResponse({
-    cache,
-    key: new Request("https://index.test/"),
-    generate: async () => new Response("New reading"),
-    waitUntil: (promise) => {
-      work.push(promise);
-    },
-    now,
-  });
-  assert.equal(result.headers.get("X-Index-Cache"), "STALE");
-  assert.equal(await result.text(), "Old reading");
-  await Promise.all(work);
-  assert.equal(await cache.response!.clone().text(), "New reading");
-});
-test("background errors never overwrite a valid cached page", async () => {
-  const cache = new MemoryResponses();
-  cache.response = new Response("Valid saved page", {
-    headers: { "X-Generated-At": String(now - 3600000) },
-  });
-  const work: Promise<unknown>[] = [];
-  const result = await cachedResponse({
-    cache,
-    key: new Request("https://index.test/"),
-    generate: async () => new Response("Feed unavailable", { status: 503 }),
-    waitUntil: (promise) => {
-      work.push(promise);
-    },
-    now,
-  });
-  assert.equal(await result.text(), "Valid saved page");
-  await Promise.all(work);
-  assert.equal(await cache.response!.clone().text(), "Valid saved page");
-});
-
-test("Worker fetch uses supported redirect handling and rejects redirects", async () => {
+test("RSS fetch uses supported redirect handling and rejects redirects", async () => {
   const store = new MemorySnapshot();
   await assert.rejects(
     getFeed(
@@ -317,4 +241,79 @@ test("upstream Retry-After prevents immediate retry", async (t) => {
     /503/,
   );
   assert.equal(attempts, 1);
+});
+
+test("store read failure still permits a validated upstream reading", async (t) => {
+  const warning = t.mock.method(console, "warn", () => {});
+  const store = new MemorySnapshot();
+  t.mock.method(store, "get", async () => {
+    throw new Error("Store unavailable");
+  });
+  const snapshot = await getFeed(store, async () => new Response(xml), now);
+  assert.equal(snapshot.fetchedAt, now);
+  assert.equal(snapshot.stale, false);
+  assert.equal(
+    warning.mock.calls[0].arguments[0],
+    "Feed snapshot could not be read.",
+  );
+});
+
+test("store write failure returns the real reading and records the failure", async (t) => {
+  const warning = t.mock.method(console, "warn", () => {});
+  const store = new MemorySnapshot();
+  t.mock.method(store, "put", async () => {
+    throw new Error("Store unavailable");
+  });
+  const snapshot = await getFeed(store, async () => new Response(xml), now);
+  assert.equal(snapshot.fetchedAt, now);
+  assert.equal(snapshot.stale, false);
+  assert.equal(store.value, null);
+  assert.equal(
+    warning.mock.calls[0].arguments[0],
+    "Feed snapshot could not be saved.",
+  );
+});
+
+test("invalid saved data cannot become a successful fallback", async (t) => {
+  t.mock.method(console, "warn", () => {});
+  for (const value of [
+    { videos: [], fetchedAt: now },
+    { videos, fetchedAt: now + 1 },
+  ]) {
+    const store = new MemorySnapshot();
+    store.value = value;
+    await assert.rejects(
+      getFeed(
+        store,
+        async () => new Response("Unavailable", { status: 503 }),
+        now,
+      ),
+    );
+  }
+});
+
+test("missing RSS descriptions remain visible as missing data", async () => {
+  const store = new MemorySnapshot();
+  const snapshot = await getFeed(
+    store,
+    async () =>
+      new Response(
+        xml.replace(/<media:description>[\s\S]*?<\/media:description>/g, ""),
+      ),
+    now,
+  );
+  assert.ok(snapshot.videos.every((video) => video.description === ""));
+});
+
+test("oversized RSS keeps the original saved reading", async (t) => {
+  t.mock.method(console, "warn", () => {});
+  const store = new MemorySnapshot();
+  store.value = { videos, fetchedAt: now - 3600000 };
+  const snapshot = await getFeed(
+    store,
+    async () => new Response("x".repeat(2_000_001)),
+    now,
+  );
+  assert.equal(snapshot.stale, true);
+  assert.equal(snapshot.fetchedAt, now - 3600000);
 });

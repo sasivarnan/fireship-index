@@ -1,11 +1,7 @@
 ---
-import { env } from "cloudflare:workers";
 import { calculateIndex } from "../index.ts";
-import {
-  getFeed,
-  type FeedSnapshot,
-  type SnapshotStore,
-} from "../lib/feed-service.ts";
+import type { FeedSnapshot } from "../lib/feed-service.ts";
+import { getStoredFeed } from "../lib/feed-store.ts";
 import PageHead from "../components/PageHead.astro";
 import IndexHero from "../components/IndexHero.astro";
 import RecentVideos from "../components/RecentVideos.astro";
@@ -14,9 +10,7 @@ import SiteFooter from "../components/SiteFooter.astro";
 import "../style.css";
 let snapshot: FeedSnapshot | null = null;
 try {
-  snapshot = await getFeed(
-    (env as unknown as { FEED_CACHE: SnapshotStore }).FEED_CACHE,
-  );
+  snapshot = await getStoredFeed();
 } catch {
   Astro.response.status = 503;
   Astro.response.headers.set("Retry-After", "60");

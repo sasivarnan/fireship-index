@@ -156,13 +156,12 @@ element<HTMLFormElement>("refresh-form").addEventListener(
       sharing.update(index.score !== null);
       status.dataset.fetchedAt = String(lastFetchedAt);
       const stale = "stale" in data && data.stale === true;
-      const renewing = response.headers.get("X-Index-Cache") === "STALE";
       const missing = index.sample.filter(
         (video) => !video.description.trim(),
       ).length;
       setStatus(
-        `${feedLine(index, lastFetchedAt, stale, missing, localTime)}${renewing ? " Updating in the background." : ""}`,
-        stale || renewing ? "saved" : "ready",
+        feedLine(index, data.fetchedAt, stale, missing, localTime),
+        stale ? "saved" : "ready",
       );
     } catch {
       setStatus(`Couldn’t refresh. ${keptReading()}`, "error");

@@ -3,11 +3,11 @@
 - Keep responses concise and use ASD-STE100 Simplified Technical English.
 - Read files before editing. Preserve user changes.
 - Write self-documenting code. Use comments only when necessary.
-- Keep one public Astro page. Use the approved Cloudflare Worker and RSS API. Do not expose API secrets.
+- Keep one public Astro page. Use Astro on Vercel with 15-minute ISR for `/` and an uncached RSS API. Do not expose API secrets.
 - Render the public score and videos on the server. Parse RSS on the server; keep the manual file importer removed. Show stale-data states clearly.
 - Keep the score formula and data limits consistent in the interface, README, and discovery files.
 - Do not invent live data, predictions, endorsements, rankings, or a public domain.
-- Set the production URL in Astro’s `site` config and use `import.meta.env.SITE` for domain-specific metadata. Deploy the Astro Worker with Wrangler only when requested. Keep Cloudflare KV for the last-good feed snapshot.
+- Set the production URL in Astro’s `site` config and use `import.meta.env.SITE` for domain-specific metadata. Keep the last-good feed snapshot in the private server-only Vercel Blob store. Deploy to Vercel only when requested.
 - Keep the Built by Sasivarnan R footer linked to https://sasivarnan.com.
 - Use pnpm and keep `pnpm-lock.yaml` as the only lockfile. Run `pnpm check` after changes. Build before production browser checks.
 - Record browser checks and limits in `docs/ux-audit.md`.
